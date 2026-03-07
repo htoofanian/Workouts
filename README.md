@@ -1,2 +1,2 @@
 # Workouts
-Gyn Workout HTML files created by Claude
+Gym Workout HTML files created by Claude
