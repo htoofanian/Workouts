@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Maintenance">
+<title>Workout Log - Maintenance</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #f2f2f7;
+    --surface: #ffffff;
+    --surface2: #e8e8ed;
+    --border: #d1d1d6;
+    --text: #1c1c1e;
+    --muted: #990000;
+    --accent: #cc0000;
+    --blue: #3b82f6;
+    --red: #ef4444;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+  body { background: var(--bg); color: var(--text); font-family: 'DM Sans', sans-serif; font-size: 18px; min-height: 100vh; padding-bottom: 120px; }
+
+  .edit-banner { display: none; background: var(--blue); color: #fff; text-align: center; padding: 8px; font-size: 14px; font-weight: 600; }
+  .edit-banner.visible { display: block; }
+
+  header { background: var(--surface); border-bottom: 1px solid var(--border); padding: 20px 20px 14px; position: sticky; top: 0; z-index: 100; }
+  .header-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px; }
+  h1 { font-family: 'Bebas Neue', sans-serif; font-size: 28px; letter-spacing: 2px; color: var(--accent); line-height: 1; }
+  .subtitle { font-size: 15px; font-weight: 700; color: var(--muted); letter-spacing: 1.5px; text-transform: uppercase; margin-top: 3px; }
+  .header-btns { display: flex; gap: 8px; align-items: center; }
+  .btn { border: none; border-radius: 10px; padding: 10px 18px; font-family: 'DM Sans', sans-serif; font-weight: 600; font-size: 15px; cursor: pointer; transition: all 0.15s; white-space: nowrap; }
+  .btn:active { transform: scale(0.95); opacity: 0.85; }
+  .btn-orange { background: var(--accent); color: #fff; }
+  .btn-blue { background: var(--blue); color: #fff; }
+  .btn-gray { background: var(--surface2); color: var(--text); }
+  .day-block { margin: 0 12px 8px; }
+  .day-header { display: flex; align-items: center; gap: 10px; padding: 16px 4px 8px; }
+  .day-name { font-family: 'Bebas Neue', sans-serif; font-size: 20px; letter-spacing: 2px; color: var(--accent); }
+  .day-sub { font-size: 16px; color: var(--muted); letter-spacing: 1px; text-transform: uppercase; font-weight: 700; }
+  .day-progress { margin-left: auto; font-size: 16px; color: var(--muted); font-weight: 700; }
+  .day-progress span { color: var(--accent); font-weight: 600; }
+  .progress-bar-wrap { height: 3px; background: var(--border); border-radius: 2px; overflow: hidden; }
+  .progress-bar-fill { height: 100%; background: var(--accent); border-radius: 2px; transition: width 0.4s ease; }
+
+  .exercise-list { background: var(--surface); border-radius: 14px; overflow: hidden; border: 1px solid var(--border); }
+
+  .exercise-item.group-bottom { border-bottom: 2.5px solid #aaaaaa !important; }
+  .exercise-item { display: flex; align-items: center; padding: 13px 14px; border-bottom: 1px solid var(--border); gap: 12px; user-select: none; }
+  .exercise-item:last-child { border-bottom: none; }
+  .checkbox-zone { display: flex; align-items: center; padding: 8px; margin: -8px; margin-right: 4px; cursor: pointer; flex-shrink: 0; }
+  .checkbox-zone:active .checkbox { transform: scale(0.9); }
+  .checkbox { width: 26px; height: 26px; border-radius: 50%; border: 2px solid var(--border); display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: all 0.2s; background: transparent; }
+  .exercise-item.done .checkbox { background: #ff8c00; border-color: #ff8c00; }
+  .checkmark { display: none; width: 11px; height: 8px; }
+  .checkmark path { stroke: #fff; stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; fill: none; }
+  .exercise-item.done .checkmark { display: block; }
+  .exercise-name { flex: 1; font-size: 17px; font-weight: 500; line-height: 1.3; color: var(--text); }
+  .exercise-item.done .exercise-name { color: #c45e00; }
+  .exercise-weight { font-size: 16px; font-weight: 600; color: var(--text); }
+  .diff-zone { display: flex; align-items: center; gap: 10px; cursor: pointer; padding: 8px; margin: -8px; border-radius: 12px; flex-shrink: 0; }
+  .diff-zone:active { background: var(--surface2); }
+  .difficulty-btn { min-width: 30px; height: 24px; border-radius: 12px; border: 1.5px solid var(--border); font-size: 14px; display: flex; align-items: center; justify-content: center; cursor: pointer; flex-shrink: 0; background: var(--surface2); transition: all 0.15s; padding: 0 5px; outline: none; -webkit-appearance: none; }
+  .difficulty-btn:active { transform: scale(0.9); }
+  .difficulty-picker { position: fixed; background: #ffffff; border: 1px solid var(--border); border-radius: 16px; padding: 10px; display: grid; grid-template-columns: repeat(4, 44px); gap: 8px; z-index: 999; box-shadow: 0 8px 24px rgba(0,0,0,0.25); }
+  .diff-option { width: 44px; height: 44px; border-radius: 12px; border: 2px solid var(--border); font-size: 22px; cursor: pointer; background: var(--surface2); display: flex; align-items: center; justify-content: center; transition: all 0.1s; }
+  .diff-option:active { transform: scale(0.85); }
+
+  /* Edit mode */
+  .edit-row { display: flex; align-items: center; padding: 10px 12px; border-bottom: 1px solid var(--border); gap: 10px; background: var(--surface); position: relative; }
+  .edit-row:last-child { border-bottom: none; }
+  .edit-row.drag-placeholder { background: #eff6ff; border: 2px dashed var(--blue); opacity: 0.6; }
+  .drag-handle { display: flex; flex-direction: column; justify-content: center; gap: 5px; padding: 8px 6px; cursor: grab; flex-shrink: 0; touch-action: none; }
+  .drag-handle span { display: block; width: 22px; height: 3px; background: var(--border); border-radius: 2px; }
+  .edit-inputs { flex: 1; display: flex; flex-direction: column; gap: 6px; }
+  .edit-input { width: 100%; border: 1.5px solid var(--border); border-radius: 8px; padding: 9px 11px; font-family: 'DM Sans', sans-serif; font-size: 16px; color: var(--text); background: var(--bg); outline: none; }
+  .edit-input:focus { border-color: var(--blue); }
+  .edit-input.name-input { font-weight: 500; font-size: 17px; }
+  .edit-input.weight-input { color: var(--muted); font-size: 14px; }
+  .delete-btn { width: 40px; height: 40px; border-radius: 50%; border: none; background: #fee2e2; color: var(--red); font-size: 18px; display: flex; align-items: center; justify-content: center; cursor: pointer; flex-shrink: 0; transition: all 0.15s; }
+  .delete-btn:active { transform: scale(0.9); }
+  .add-exercise-btn { display: flex; align-items: center; justify-content: center; gap: 8px; width: 100%; margin-top: 8px; padding: 14px; background: var(--surface); border: 2px dashed var(--blue); border-radius: 14px; color: var(--blue); font-family: 'DM Sans', sans-serif; font-size: 16px; font-weight: 600; cursor: pointer; transition: all 0.15s; }
+  .add-exercise-btn:active { background: #eff6ff; }
+
+  /* Floating drag ghost */
+  #dragGhost { position: fixed; left: 12px; right: 12px; background: white; border: 2px solid var(--blue); border-radius: 12px; padding: 12px 14px; display: none; align-items: center; gap: 10px; z-index: 999; box-shadow: 0 10px 30px rgba(0,0,0,0.2); pointer-events: none; }
+  #dragGhost .ghost-name { font-size: 17px; font-weight: 500; color: var(--text); }
+  #dragGhost .ghost-detail { font-size: 14px; color: var(--muted); }
+
+  /* Modal */
+  .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 300; display: flex; align-items: center; justify-content: center; opacity: 0; pointer-events: none; transition: opacity 0.2s; padding: 20px; }
+  .modal-overlay.visible { opacity: 1; pointer-events: all; }
+  .modal { background: var(--surface); border-radius: 20px; padding: 20px; width: 100%; max-width: 320px; transform: translateY(20px); transition: transform 0.2s; }
+  .modal-overlay.visible .modal { transform: translateY(0); }
+  .modal-btns { display: flex; gap: 10px; }
+  .modal-btns button { flex: 1; padding: 15px; border-radius: 12px; border: none; font-family: 'DM Sans', sans-serif; font-size: 16px; font-weight: 600; cursor: pointer; transition: all 0.15s; }
+  .modal-btns button:active { transform: scale(0.97); }
+  .btn-cancel-modal { background: var(--surface2); color: var(--text); }
+  .btn-confirm-modal { background: var(--accent); color: #fff; }
+</style>
+</head>
+<body>
+
+<div class="edit-banner" id="editBanner">✏️ EDIT MODE — Tap fields to rename · ☰ Hold & drag to reorder · 🗑 Delete</div>
+
+<header>
+  <div class="header-top">
+    <div>
+      <h1>Workout Log</h1>
+      <div class="subtitle">Maintenance</div>
+    </div>
+    <div class="header-btns">
+      <button class="btn btn-gray" id="editBtn" onclick="toggleEdit()">Edit</button>
+      <button class="btn btn-orange" onclick="showReset()">↺ Reset</button>
+    </div>
+  </div>
+</header>
+
+<div id="dragGhost">
+  <div style="flex:1">
+    <div class="ghost-name" id="ghostName"></div>
+    <div class="ghost-detail" id="ghostDetail"></div>
+  </div>
+</div>
+
+<div id="app"></div>
+
+<div class="modal-overlay" id="resetModal">
+  <div class="modal">
+    <div class="modal-btns">
+      <button class="btn-cancel-modal" onclick="hideReset()">Cancel</button>
+      <button class="btn-confirm-modal" onclick="confirmReset()">Reset All</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const DEFAULT_DAYS = [
+  { day:"Monday", type:"ARMS", gym:"Culver", exercises:[
+    {name:"Chest Press",detail:"C65 · M60"},
+    {name:"Chest Fly Close",detail:"60"},
+    {name:"Triceps Assisted Dip",detail:"70", groupBottom:true},
+    {name:"Lateral Pull Down Wide",detail:"70"},
+    {name:"Front Pull Down – Rotation",detail:"40", groupBottom:true},
+    {name:"Shoulder Press",detail:"C30 · M25"},
+    {name:"Shoulder Lateral Raise",detail:"25", groupBottom:true},
+    {name:"Row Cable",detail:"35 · 7th"},
+    {name:"Row Machine",detail:"C60 · M50", groupBottom:true},
+    {name:"Triceps Machine",detail:"40"},
+    {name:"Triceps Rope",detail:"35", groupBottom:true},
+    {name:"Biceps Curls",detail:"20"},
+    {name:"Hammer Curl Dumbbells",detail:"15"},
+  ]},
+  { day:"Wednesday", type:"LEGS", gym:"Michelson", exercises:[
+    {name:"Leg Extensions",detail:"50"},
+    {name:"Leg Curls",detail:"C65 · M70"},
+    {name:"Leg Press",detail:"260"},
+    {name:"Hip Abduction (OUT)",detail:"160"},
+    {name:"Hip Adduction (IN)",detail:"220"},
+    {name:"Seated Calves",detail:"45"},
+    {name:"Ab Crunch",detail:"3x15 · 40"},
+  ]},
+  { day:"Friday", type:"CORE", gym:"Culver", exercises:[
+    {name:"Ab Crunch",detail:"3x15 · 40"},
+    {name:"Reverse Bench Crunch",detail:"3x8"},
+    {name:"Torso Twists",detail:"65"},
+    {name:"Side Bends",detail:"22 · 5th"},
+    {name:"Rear Deltoid Fly",detail:"50"},
+    {name:"Cable Shrugs",detail:""},
+    {name:"Rope Climb",detail:"50"},
+    {name:"Ski ERG",detail:"10"},
+  ]},
+  {day:"Other", type:"EXERCISES", gym:null, exercises:[
+    {name:"Stretching 1", detail:""},
+    {name:"Stretching 2", detail:""},
+    {name:"Planks / Ab Wheel", detail:""},
+    {name:"Cycling", detail:""},
+    {name:"Elliptical / Rowing", detail:""},
+  ]},
+];
+
+const DIFFICULTIES = ["🟢","🟡","🟠","🔴","","🔺","🔻"];
+
+// ── Storage (namespaced separately from push-pull app) ─
+function saveDays() { try { localStorage.setItem('maint_days', JSON.stringify(days)); } catch(e) {} }
+function loadDays() { try { const s = localStorage.getItem('maint_days'); return s ? JSON.parse(s) : JSON.parse(JSON.stringify(DEFAULT_DAYS)); } catch { return JSON.parse(JSON.stringify(DEFAULT_DAYS)); } }
+function saveState() { try { localStorage.setItem('maint_state', JSON.stringify(state)); } catch(e) {} }
+function loadState() { try { const s = localStorage.getItem('maint_state'); return s ? JSON.parse(s) : {}; } catch { return {}; } }
+
+let days = loadDays();
+let state = loadState();
+let openPicker = null;
+let editMode = false;
+
+function key(d,e){return `${d}_${e}`;}
+function getEx(d,e){return state[key(d,e)]||{done:false,diff:""};}
+
+function toggleDone(d,e){
+  state[key(d,e)]={...getEx(d,e),done:!getEx(d,e).done};
+  saveState(); render();
+}
+function setDiff(d,e,diff){
+  state[key(d,e)]={...getEx(d,e),diff};
+  openPicker=null; saveState(); render();
+}
+
+let pickerPos = { top: null, bottom: null, right: 8 };
+
+function togglePicker(id, event) {
+  event.stopPropagation();
+  if (openPicker === id) { openPicker = null; render(); return; }
+
+  const btn = event.currentTarget.querySelector('.difficulty-btn') || event.target.closest('.difficulty-btn') || event.target;
+  const rect = btn.getBoundingClientRect();
+  const pickerHeight = 118;
+  const bottomBarHeight = 80;
+  const spaceBelow = window.innerHeight - rect.bottom - bottomBarHeight;
+  const right = Math.max(8, window.innerWidth - rect.right - 4);
+
+  if (spaceBelow >= pickerHeight) {
+    pickerPos = { top: rect.bottom + 6, bottom: null, right };
+  } else {
+    pickerPos = { top: null, bottom: window.innerHeight - rect.top + 6, right };
+  }
+
+  openPicker = id;
+  render();
+}
+
+function flushInputs(){
+  document.querySelectorAll('.edit-row').forEach(row=>{
+    const d=parseInt(row.dataset.d), e=parseInt(row.dataset.e);
+    if(!isNaN(d)&&!isNaN(e)&&days[d]&&days[d].exercises[e]){
+      const n=row.querySelector('.name-input'), w=row.querySelector('.weight-input');
+      if(n) days[d].exercises[e].name=n.value||days[d].exercises[e].name;
+      if(w) days[d].exercises[e].detail=w.value;
+    }
+  });
+  saveDays();
+}
+
+function toggleEdit(){
+  if(editMode) flushInputs();
+  editMode=!editMode;
+  const btn=document.getElementById('editBtn');
+  btn.textContent=editMode?'Done':'Edit';
+  btn.className=editMode?'btn btn-blue':'btn btn-gray';
+  document.getElementById('editBanner').className=editMode?'edit-banner visible':'edit-banner';
+  render();
+}
+
+function deleteExercise(d,e){
+  flushInputs();
+  days[d].exercises.splice(e,1);
+  const ns={};
+  Object.keys(state).forEach(k=>{
+    const [kd,ke]=k.split('_').map(Number);
+    if(kd!==d){ns[k]=state[k];return;}
+    if(ke<e) ns[k]=state[k];
+    else if(ke>e) ns[`${kd}_${ke-1}`]=state[k];
+  });
+  state=ns; saveDays(); saveState(); render();
+}
+
+function addExercise(d){
+  flushInputs();
+  days[d].exercises.push({name:"New Exercise",detail:""});
+  saveDays(); render();
+  setTimeout(()=>{
+    const rows=document.querySelectorAll(`.edit-row[data-d="${d}"]`);
+    if(rows.length){const inp=rows[rows.length-1].querySelector('.name-input');inp.focus();inp.select();}
+  },60);
+}
+
+// ── Drag to reorder ──────────────────────────────────
+let dragState = null;
+
+function onHandleTouchStart(e, d, fromIdx) {
+  e.preventDefault();
+  flushInputs();
+  const ex = days[d].exercises[fromIdx];
+  document.getElementById('ghostName').textContent = ex.name;
+  document.getElementById('ghostDetail').textContent = ex.detail;
+  const ghost = document.getElementById('dragGhost');
+  ghost.style.display = 'flex';
+  ghost.style.top = (e.touches[0].clientY - 40) + 'px';
+  dragState = { d, fromIdx, currentIdx: fromIdx };
+  render();
+}
+
+function onTouchMove(e) {
+  if (!dragState) return;
+  e.preventDefault();
+  const touchY = e.touches[0].clientY;
+  const ghost = document.getElementById('dragGhost');
+  ghost.style.top = (touchY - 40) + 'px';
+  const rows = document.querySelectorAll(`.edit-row[data-d="${dragState.d}"]`);
+  let newIdx = dragState.currentIdx;
+  rows.forEach(row => {
+    if (row.classList.contains('drag-placeholder')) return;
+    const rect = row.getBoundingClientRect();
+    const mid = rect.top + rect.height / 2;
+    const rowIdx = parseInt(row.dataset.e);
+    if (touchY > mid) newIdx = rowIdx;
+    else if (touchY < rect.top && rowIdx === 0) newIdx = 0;
+  });
+  if (newIdx !== dragState.currentIdx) { dragState.currentIdx = newIdx; render(); }
+}
+
+function onTouchEnd() {
+  if (!dragState) return;
+  const { d, fromIdx, currentIdx } = dragState;
+  dragState = null;
+  document.getElementById('dragGhost').style.display = 'none';
+  if (fromIdx !== currentIdx) {
+    const arr = days[d].exercises;
+    const [moved] = arr.splice(fromIdx, 1);
+    arr.splice(currentIdx, 0, moved);
+    const n = arr.length;
+    const oldOrder = Array.from({length: n}, (_,i) => i);
+    const [m] = oldOrder.splice(fromIdx, 1);
+    oldOrder.splice(currentIdx, 0, m);
+    const ns = {};
+    Object.keys(state).forEach(k => {
+      const [kd, ke] = k.split('_').map(Number);
+      if (kd !== d) { ns[k] = state[k]; return; }
+    });
+    oldOrder.forEach((oldIdx, newIdx) => {
+      const oldKey = `${d}_${oldIdx}`;
+      if (state[oldKey]) ns[`${d}_${newIdx}`] = state[oldKey];
+    });
+    state = ns;
+    saveDays(); saveState();
+  }
+  render();
+}
+
+document.addEventListener('touchmove', onTouchMove, { passive: false });
+document.addEventListener('touchend', onTouchEnd);
+
+function showReset(){
+  if(editMode) flushInputs();
+  document.getElementById('resetModal').classList.add('visible');
+}
+function hideReset(){ document.getElementById('resetModal').classList.remove('visible'); }
+function confirmReset(){
+  Object.keys(state).forEach(k=>{ if(state[k]) state[k].done=false; });
+  saveState(); hideReset(); render();
+}
+
+document.addEventListener('click',()=>{ if(openPicker!==null){openPicker=null;render();} });
+
+// ── Render ───────────────────────────────────────────
+function render(){
+  const app=document.getElementById('app');
+  let html='';
+
+  days.forEach((dayData,d)=>{
+    html+=`<div class="day-block">`;
+    const total=dayData.exercises.length;
+    const done=dayData.exercises.filter((_,e)=>getEx(d,e).done).length;
+    const displayTotal = dayData.type === 'ARMS' ? 8 : total;
+    const pct = total ? Math.min(100, Math.round(done/displayTotal*100)) : 0;
+
+    html+=`<div class="day-header">
+      <span class="day-name">${dayData.day}</span>
+      <span class="day-sub">${dayData.type}${dayData.gym?' · '+dayData.gym:''}</span>
+      ${!editMode&&total>0?`<span class="day-progress"><span>${done}</span>/${displayTotal}</span>`:''}
+    </div>`;
+
+    if(!editMode&&total>0){
+      html+=`<div class="progress-bar-wrap"><div class="progress-bar-fill" style="width:${pct}%"></div></div>`;
+    }
+
+    if(total>0){
+      html+=`<br><div class="exercise-list">`;
+      const displayList = [];
+      if (dragState && dragState.d === d) {
+        const arr = [...dayData.exercises];
+        const [moved] = arr.splice(dragState.fromIdx, 1);
+        arr.splice(dragState.currentIdx, 0, { __placeholder: true, name: moved.name, detail: moved.detail });
+        arr.forEach((ex, dispIdx) => {
+          if (ex.__placeholder) {
+            displayList.push({ ex, realIdx: -1, dispIdx });
+          } else {
+            const orig = dayData.exercises.indexOf(ex);
+            displayList.push({ ex, realIdx: orig, dispIdx });
+          }
+        });
+      } else {
+        dayData.exercises.forEach((ex, e) => displayList.push({ ex, realIdx: e, dispIdx: e }));
+      }
+
+      displayList.forEach(({ ex, realIdx }) => {
+        if (editMode) {
+          if (ex.__placeholder) {
+            html += `<div class="edit-row drag-placeholder" style="height:70px"></div>`;
+          } else {
+            const isDragging = dragState && dragState.d === d && dragState.fromIdx === realIdx;
+            html+=`<div class="edit-row${isDragging?' drag-placeholder':''}" data-d="${d}" data-e="${realIdx}">
+              <div class="drag-handle" id="handle_${d}_${realIdx}">
+                <span></span><span></span><span></span>
+              </div>
+              <div class="edit-inputs">
+                <input class="edit-input name-input" type="text" value="${ex.name.replace(/"/g,'&quot;')}" placeholder="Exercise name"
+                  onchange="days[${d}].exercises[${realIdx}].name=this.value;saveDays();">
+                <input class="edit-input weight-input" type="text" value="${ex.detail.replace(/"/g,'&quot;')}" placeholder="Sets · reps · weight"
+                  onchange="days[${d}].exercises[${realIdx}].detail=this.value;saveDays();">
+              </div>
+              <button class="delete-btn" onclick="deleteExercise(${d},${realIdx})">🗑</button>
+            </div>`;
+          }
+        } else {
+          const exState=getEx(d,realIdx);
+          const pickerId=`${d}_${realIdx}`;
+          const isDone=exState.done;
+          const diff=exState.diff||"";
+          const groupClass=(ex.groupTop?' group-top':'')+(ex.groupBottom?' group-bottom':'');
+          html+=`<div class="exercise-item${isDone?' done':''}${groupClass}">
+            <div class="checkbox-zone" onclick="toggleDone(${d},${realIdx})">
+              <div class="checkbox"><svg class="checkmark" viewBox="0 0 10 7"><path d="M1 3.5L3.5 6L9 1"/></svg></div>
+            </div>
+            <div class="exercise-name">${ex.name}</div>
+            <div class="diff-zone" onclick="togglePicker('${pickerId}',event)">
+              <div class="exercise-weight">${ex.detail}</div>
+              <div style="position:relative;display:inline-flex;">
+                <button class="difficulty-btn">${diff||'·'}</button>
+                ${openPicker===pickerId?`
+                <div class="difficulty-picker" style="right:${pickerPos.right}px;${pickerPos.top!==null?'top:'+pickerPos.top+'px':'bottom:'+pickerPos.bottom+'px'}" onclick="event.stopPropagation()">
+                  ${DIFFICULTIES.map(d2=>`<button class="diff-option" onclick="setDiff(${d},${realIdx},'${d2}')">${d2||'✕'}</button>`).join('')}
+                </div>`:''}
+              </div>
+            </div>
+          </div>`;
+        }
+      });
+
+      html+=`</div>`;
+    }
+
+    if(editMode){
+      html+=`<button class="add-exercise-btn" onclick="addExercise(${d})">＋ Add exercise to ${dayData.day}</button>`;
+    }
+
+    html+=`</div>`;
+  });
+
+  app.innerHTML=html;
+
+  if(editMode){
+    document.querySelectorAll('.drag-handle').forEach(handle=>{
+      const id = handle.id;
+      const parts = id.split('_');
+      const d = parseInt(parts[1]);
+      const e = parseInt(parts[2]);
+      handle.addEventListener('touchstart', ev => onHandleTouchStart(ev, d, e), {passive:false});
+    });
+  }
+}
+
+render();
+</script>
+</body>
+</html>
