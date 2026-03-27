@@ -1,2 +1,2 @@
 # Workouts
-Gym Workout trackers - HTML files created by Claude
+Gym Workout trackers - HTML files format - for phones
