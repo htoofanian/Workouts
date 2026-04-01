@@ -28,7 +28,7 @@
 
   header { background: var(--surface); border-bottom: 1px solid var(--border); padding: 10px 16px 8px; position: sticky; top: 0; z-index: 100; }
   .header-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 6px; }
-  h1 { font-family: 'Bebas Neue', sans-serif; font-size: 24px; letter-spacing: 2px; color: var(--accent); line-height: 1; }
+  h1 { font-family: 'Bebas Neue', sans-serif; font-size: 24px; letter-spacing: 2px; color: var(--accent); line-height: 1; font-weight: normal; }
   .subtitle { font-size: 13px; font-weight: 700; color: var(--muted); letter-spacing: 1.5px; text-transform: uppercase; margin-top: 2px; }
   .header-btns { display: flex; gap: 8px; align-items: center; }
   .btn { border: none; border-radius: 10px; padding: 7px 14px; font-family: 'DM Sans', sans-serif; font-weight: 600; font-size: 14px; cursor: pointer; transition: all 0.15s; white-space: nowrap; }
@@ -47,9 +47,14 @@
 
   .exercise-list { background: var(--surface); border-radius: 14px; overflow: hidden; border: 1px solid var(--border); }
 
+  .exercise-group { border: 2px solid var(--blue); border-radius: 12px; margin: 8px 8px 0 8px; overflow: hidden; }
+  .exercise-group .exercise-item { border-bottom: 1px solid var(--border); }
+  .exercise-group .exercise-item:last-child { border-bottom: none; }
+  .exercise-group + .exercise-item { border-top: 1px solid var(--border); margin-top: 8px; }
+
   .exercise-item { display: flex; align-items: center; padding: 9px 14px; border-bottom: 1px solid var(--border); gap: 12px; user-select: none; }
   .exercise-item:last-child { border-bottom: none; }
-  .checkbox-zone { display: flex; align-items: center; padding: 8px; margin: -8px; margin-right: 4px; cursor: pointer; flex-shrink: 0; }
+  .checkbox-zone { display: flex; align-items: center; padding: 8px; margin: -8px; cursor: pointer; flex-shrink: 0; }
   .checkbox-zone:active .checkbox { transform: scale(0.9); }
   .checkbox { width: 22px; height: 22px; border-radius: 50%; border: 2px solid var(--border); display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: all 0.2s; background: transparent; }
   .exercise-item.done .checkbox { background: #ff8c00; border-color: #ff8c00; }
@@ -95,10 +100,10 @@
   .btn-save-download { background: var(--blue); color: #fff; }
   .btn-save-cancel { background: transparent; color: var(--muted); font-size: 14px; padding: 8px; }
 
-  .header-edit-title { font-family: 'Bebas Neue', sans-serif; font-size: 24px; letter-spacing: 2px; color: var(--accent); background: transparent; border: none; border-bottom: 1.5px solid var(--accent); outline: none; width: 160px; padding: 0; line-height: 1; }
-  .header-edit-sub { font-size: 13px; font-weight: 700; color: var(--muted); letter-spacing: 1.5px; text-transform: uppercase; background: transparent; border: none; border-bottom: 1.5px solid var(--border); outline: none; width: 140px; padding: 0; margin-top: 2px; font-family: 'DM Sans', sans-serif; }
-  .day-edit-name { font-family: 'Bebas Neue', sans-serif; font-size: 20px; letter-spacing: 2px; color: var(--accent); background: transparent; border: none; border-bottom: 1.5px solid var(--accent); outline: none; flex: 1; min-width: 0; padding: 0; }
-  .day-edit-sub { font-size: 14px; font-weight: 700; color: var(--muted); letter-spacing: 1px; text-transform: uppercase; background: transparent; border: none; border-bottom: 1.5px solid var(--border); outline: none; flex: 2; min-width: 0; padding: 0; font-family: 'DM Sans', sans-serif; }
+  .header-edit-title { font-family: 'Bebas Neue', sans-serif; font-size: 24px; letter-spacing: 2px; color: var(--accent); background: transparent; border: none; outline: none; width: 160px; padding: 0; line-height: 1; }
+  .header-edit-sub { font-size: 13px; font-weight: 700; color: var(--muted); letter-spacing: 1.5px; text-transform: uppercase; background: transparent; border: none; outline: none; width: 140px; padding: 0; margin-top: 2px; font-family: 'DM Sans', sans-serif; }
+  .day-edit-name { font-family: 'Bebas Neue', sans-serif; font-size: 20px; letter-spacing: 2px; color: var(--accent); background: transparent; border: none; outline: none; padding: 0; }
+  .day-edit-sub { font-size: 16px; font-weight: 700; color: var(--muted); letter-spacing: 1px; text-transform: uppercase; background: transparent; border: none; outline: none; padding: 0; font-family: 'DM Sans', sans-serif; }
   .save-filename-row { margin-bottom: 14px; }
   .save-filename-row label { font-size: 13px; color: var(--muted); font-weight: 600; display: block; margin-bottom: 4px; }
   .save-filename-input { width: 100%; border: 1.5px solid var(--border); border-radius: 8px; padding: 8px 10px; font-family: 'DM Sans', sans-serif; font-size: 14px; color: var(--text); background: var(--bg); outline: none; }
@@ -131,8 +136,8 @@
     <div class="header-btns">
       <button class="btn btn-gray" id="editBtn" onclick="toggleEdit()">Edit</button>
       <button class="btn btn-gray" id="cancelBtn" onclick="cancelEdit()" style="display: none;">Cancel</button>
-      <button class="btn btn-gray" onclick="showSave()">Save</button>
-      <button class="btn btn-orange" onclick="showReset()">↺ Reset</button>
+      <button class="btn btn-gray" id="saveBtn" onclick="showSave()">Save</button>
+      <button class="btn btn-orange" id="resetBtn" onclick="showReset()">↺ Reset</button>
     </div>
   </div>
   <div class="edit-heading" id="editHeading">EDIT ROUTINE</div>
@@ -632,7 +637,13 @@ const DEFAULT_DAYS = [
     "exercises": [
       {
         "name": "Chest Press",
-        "detail": "C65 · M60"
+        "detail": "C65 · M60",
+        "group": "chest_press"
+      },
+      {
+        "name": "Chest Press Up",
+        "detail": "50",
+        "group": "chest_press"
       },
       {
         "name": "Chest Fly Close",
@@ -643,48 +654,62 @@ const DEFAULT_DAYS = [
         "detail": "70"
       },
       {
-        "name": "Lateral Pull Down, OR",
-        "detail": "70"
+        "name": "Lateral Pull Down",
+        "detail": "70",
+        "group": "pulldowns"
       },
       {
         "name": "Front Rotation Down",
-        "detail": "40"
+        "detail": "40",
+        "group": "pulldowns"
       },
       {
-        "name": "Shoulder Press, OR",
-        "detail": "C30 · M25"
+        "name": "Shoulder Press",
+        "detail": "C30 · M25",
+        "group": "shoulders"
       },
       {
         "name": "Shoulder Laterals",
-        "detail": "25"
+        "detail": "25",
+        "group": "shoulders"
       },
       {
-        "name": "Row Cable, OR",
-        "detail": "35 · 7th"
+        "name": "Row Cable",
+        "detail": "35 · 7th",
+        "group": "rows"
       },
       {
         "name": "Row Machine",
-        "detail": "C60 · M50"
-      },
-      {
-        "name": "Triceps Machine, OR",
-        "detail": "40"
+        "detail": "C60 · M50",
+        "group": "rows"
       },
       {
         "name": "Triceps Rope",
-        "detail": "35"
+        "detail": "35",
+        "group": "triceps"
       },
       {
-        "name": "Bicep Curl, OR",
-        "detail": "20"
+        "name": "Triceps Machine",
+        "detail": "40",
+        "group": "triceps"
+      },
+      {
+        "name": "Bicep Curl",
+        "detail": "20",
+        "group": "biceps"
       },
       {
         "name": "Bicep Curl Dumbell",
+        "detail": "12.5",
+        "group": "biceps"
+      },
+      {
+        "name": "Hammer Curl Dumbbell",
         "detail": "12.5"
       },
       {
-        "name": "Hammer Curl Dumbbells",
-        "detail": "12.5"
+        "name": "Ab Crunch",
+        "detail": "3x15 · 40"
       }
     ]
   },
@@ -738,11 +763,13 @@ const DEFAULT_DAYS = [
       },
       {
         "name": "Torso Twists",
-        "detail": "65"
+        "detail": "65",
+        "group": "core"
       },
       {
         "name": "Side Bends",
-        "detail": "22 · 5th"
+        "detail": "22 · 5th",
+        "group": "core"
       },
       {
         "name": "Rear Deltoid Fly",
@@ -754,11 +781,13 @@ const DEFAULT_DAYS = [
       },
       {
         "name": "Rope Climb",
-        "detail": "50"
+        "detail": "50",
+        "group": "cardio"
       },
       {
         "name": "Ski ERG",
-        "detail": "10"
+        "detail": "10",
+        "group": "cardio"
       }
     ]
   },
@@ -800,15 +829,15 @@ const DEFAULT_DAYS = [
 ];
 
 const DIFFICULTIES = ["🔴","🟠","🟡","🟢","","🔺","🔻"];
-const DEFAULT_META = {"title":"Workout Log","subtitle":"Maintenance","version":31,"savedDate":""};
+const DEFAULT_META = {"title":"Workout Log","subtitle":"Maintenance","version":37,"savedDate":""};
 
 // ── Storage (namespaced separately from push-pull app) ─
-function saveDays() { try { localStorage.setItem('maint_days', JSON.stringify(days)); } catch(e) {} }
-function loadDays() { try { const s = localStorage.getItem('maint_days'); return s ? JSON.parse(s) : JSON.parse(JSON.stringify(DEFAULT_DAYS)); } catch { return JSON.parse(JSON.stringify(DEFAULT_DAYS)); } }
-function saveState() { try { localStorage.setItem('maint_state', JSON.stringify(state)); } catch(e) {} }
-function loadState() { try { const s = localStorage.getItem('maint_state'); return s ? JSON.parse(s) : {}; } catch { return {}; } }
-function saveMeta() { try { localStorage.setItem('maint_meta', JSON.stringify(meta)); } catch(e) {} }
-function loadMeta() { try { const s = localStorage.getItem('maint_meta'); return s ? JSON.parse(s) : JSON.parse(JSON.stringify(DEFAULT_META)); } catch { return JSON.parse(JSON.stringify(DEFAULT_META)); } }
+function saveDays() { try { localStorage.setItem('maint7_days', JSON.stringify(days)); } catch(e) {} }
+function loadDays() { try { const s = localStorage.getItem('maint7_days'); return s ? JSON.parse(s) : JSON.parse(JSON.stringify(DEFAULT_DAYS)); } catch { return JSON.parse(JSON.stringify(DEFAULT_DAYS)); } }
+function saveState() { try { localStorage.setItem('maint7_state', JSON.stringify(state)); } catch(e) {} }
+function loadState() { try { const s = localStorage.getItem('maint7_state'); return s ? JSON.parse(s) : {}; } catch { return {}; } }
+function saveMeta() { try { localStorage.setItem('maint7_meta', JSON.stringify(meta)); } catch(e) {} }
+function loadMeta() { try { const s = localStorage.getItem('maint7_meta'); return s ? JSON.parse(s) : JSON.parse(JSON.stringify(DEFAULT_META)); } catch { return JSON.parse(JSON.stringify(DEFAULT_META)); } }
 
 let days = loadDays();
 let state = loadState();
@@ -890,6 +919,10 @@ function toggleEdit(){
   btn.className=editMode?'btn btn-blue':'btn btn-gray';
   const cancelBtn=document.getElementById('cancelBtn');
   if(cancelBtn) cancelBtn.style.display=editMode?'inline-flex':'none';
+  const saveBtn=document.getElementById('saveBtn');
+  const resetBtn=document.getElementById('resetBtn');
+  if(saveBtn) saveBtn.style.display=editMode?'none':'inline-flex';
+  if(resetBtn) resetBtn.style.display=editMode?'none':'inline-flex';
   renderHeader();
   render();
 }
@@ -905,6 +938,10 @@ function cancelEdit(){
   btn.textContent='Edit';
   btn.className='btn btn-gray';
   document.getElementById('cancelBtn').style.display='none';
+  const saveBtn=document.getElementById('saveBtn');
+  const resetBtn=document.getElementById('resetBtn');
+  if(saveBtn) saveBtn.style.display='inline-flex';
+  if(resetBtn) resetBtn.style.display='inline-flex';
   renderHeader();
   render();
 }
@@ -1061,14 +1098,38 @@ function confirmReset(){
 document.addEventListener('click',()=>{ if(openPicker!==null){openPicker=null;render();} });
 
 // ── Render ───────────────────────────────────────────
+function countExercisesAndGroups(dayData, d) {
+  let total = 0;
+  let done = 0;
+  const seenGroups = new Set();
+  
+  dayData.exercises.forEach((ex, e) => {
+    if (ex.group) {
+      if (!seenGroups.has(ex.group)) {
+        seenGroups.add(ex.group);
+        total++;
+        // Group is done if ANY exercise in the group is done
+        const anyDone = dayData.exercises.some((gex, ge) => 
+          gex.group === ex.group && getEx(d, ge).done
+        );
+        if (anyDone) done++;
+      }
+    } else {
+      total++;
+      if (getEx(d, e).done) done++;
+    }
+  });
+  
+  return { total, done };
+}
+
 function render(){
   const app=document.getElementById('app');
   let html='';
 
   days.forEach((dayData,d)=>{
     html+=`<div class="day-block">`;
-    const total=dayData.exercises.length;
-    const done=dayData.exercises.filter((_,e)=>getEx(d,e).done).length;
+    const { total, done } = countExercisesAndGroups(dayData, d);
     const pct = total ? Math.round(done/total*100) : 0;
 
     if(editMode){
@@ -1091,43 +1152,114 @@ function render(){
 
     if(total>0){
       html+=`<br><div class="exercise-list">`;
-      dayData.exercises.forEach((ex, e) => {
+      
+      // Group exercises by group property
+      let i = 0;
+      while (i < dayData.exercises.length) {
+        const ex = dayData.exercises[i];
+        
         if (editMode) {
-          html+=`<div class="edit-row" data-d="${d}" data-e="${e}">
-              <div class="drag-handle" id="handle_${d}_${e}">
+          html+=`<div class="edit-row" data-d="${d}" data-e="${i}">
+              <div class="drag-handle" id="handle_${d}_${i}">
                 <span></span><span></span><span></span>
               </div>
               <div class="edit-inputs">
                 <input class="edit-input name-input" type="text" value="${ex.name.replace(/"/g,'&quot;')}" placeholder="Exercise name"
-                  onchange="days[${d}].exercises[${e}].name=this.value;saveDays();">
+                  onchange="days[${d}].exercises[${i}].name=this.value;saveDays();">
                 <input class="edit-input weight-input" type="text" value="${ex.detail.replace(/"/g,'&quot;')}" placeholder="Sets · reps · weight"
-                  onchange="days[${d}].exercises[${e}].detail=this.value;saveDays();">
+                  onchange="days[${d}].exercises[${i}].detail=this.value;saveDays();">
               </div>
-              <button class="delete-btn" onclick="deleteExercise(${d},${e})">🗑</button>
+              <button class="delete-btn" onclick="deleteExercise(${d},${i})">🗑</button>
             </div>`;
+          i++;
         } else {
-          const exState=getEx(d,e);
-          const pickerId=`${d}_${e}`;
-          const isDone=exState.done;
-          const diff=exState.diff||"";
-          html+=`<div class="exercise-item${isDone?' done':''}">
-            <div class="checkbox-zone" onclick="toggleDone(${d},${e})">
-              <div class="checkbox"><svg class="checkmark" viewBox="0 0 10 7"><path d="M1 3.5L3.5 6L9 1"/></svg></div>
-            </div>
-            <div class="exercise-name">${ex.name}</div>
-            <div class="diff-zone" onclick="togglePicker('${pickerId}',event)">
-              <div class="exercise-weight">${ex.detail}</div>
-              <div style="position:relative;display:inline-flex;">
-                <button class="difficulty-btn">${diff||'·'}</button>
-                ${openPicker===pickerId?`
-                <div class="difficulty-picker" style="right:${pickerPos.right}px;${pickerPos.top!==null?'top:'+pickerPos.top+'px':'bottom:'+pickerPos.bottom+'px'}" onclick="event.stopPropagation()">
-                  ${DIFFICULTIES.map(d2=>`<button class="diff-option" onclick="setDiff(${d},${e},'${d2}')">${d2||'✕'}</button>`).join('')}
-                </div>`:''}
+          // Check if this exercise is part of a group
+          if (ex.group) {
+            // Find all exercises in this group
+            const groupExercises = [];
+            let j = i;
+            while (j < dayData.exercises.length && dayData.exercises[j].group === ex.group) {
+              groupExercises.push({ ex: dayData.exercises[j], index: j });
+              j++;
+            }
+            
+            // If only 1 exercise in group, render as regular exercise
+            if (groupExercises.length === 1) {
+              const exState=getEx(d,i);
+              const pickerId=`${d}_${i}`;
+              const isDone=exState.done;
+              const diff=exState.diff||"";
+              html+=`<div class="exercise-item${isDone?' done':''}">
+                <div class="checkbox-zone" onclick="toggleDone(${d},${i})">
+                  <div class="checkbox"><svg class="checkmark" viewBox="0 0 10 7"><path d="M1 3.5L3.5 6L9 1"/></svg></div>
+                </div>
+                <div class="exercise-name">${ex.name}</div>
+                <div class="diff-zone" onclick="togglePicker('${pickerId}',event)">
+                  <div class="exercise-weight">${ex.detail}</div>
+                  <div style="position:relative;display:inline-flex;">
+                    <button class="difficulty-btn">${diff||'·'}</button>
+                    ${openPicker===pickerId?`
+                    <div class="difficulty-picker" style="right:${pickerPos.right}px;${pickerPos.top!==null?'top:'+pickerPos.top+'px':'bottom:'+pickerPos.bottom+'px'}" onclick="event.stopPropagation()">
+                      ${DIFFICULTIES.map(d2=>`<button class="diff-option" onclick="setDiff(${d},${i},'${d2}')">${d2||'✕'}</button>`).join('')}
+                    </div>`:''}
+                  </div>
+                </div>
+              </div>`;
+              i++;
+            } else {
+              // Render as group with blue border
+              html += `<div class="exercise-group">`;
+              groupExercises.forEach(({ ex: gex, index: e }) => {
+                const exState=getEx(d,e);
+                const pickerId=`${d}_${e}`;
+                const isDone=exState.done;
+                const diff=exState.diff||"";
+                html+=`<div class="exercise-item${isDone?' done':''}">
+                  <div class="checkbox-zone" onclick="toggleDone(${d},${e})">
+                    <div class="checkbox"><svg class="checkmark" viewBox="0 0 10 7"><path d="M1 3.5L3.5 6L9 1"/></svg></div>
+                  </div>
+                  <div class="exercise-name">${gex.name}</div>
+                  <div class="diff-zone" onclick="togglePicker('${pickerId}',event)">
+                    <div class="exercise-weight">${gex.detail}</div>
+                    <div style="position:relative;display:inline-flex;">
+                      <button class="difficulty-btn">${diff||'·'}</button>
+                      ${openPicker===pickerId?`
+                      <div class="difficulty-picker" style="right:${pickerPos.right}px;${pickerPos.top!==null?'top:'+pickerPos.top+'px':'bottom:'+pickerPos.bottom+'px'}" onclick="event.stopPropagation()">
+                        ${DIFFICULTIES.map(d2=>`<button class="diff-option" onclick="setDiff(${d},${e},'${d2}')">${d2||'✕'}</button>`).join('')}
+                      </div>`:''}
+                    </div>
+                  </div>
+                </div>`;
+              });
+              html += `</div>`;
+              i = j; // Skip past all grouped exercises
+            }
+          } else {
+            // Render single exercise
+            const exState=getEx(d,i);
+            const pickerId=`${d}_${i}`;
+            const isDone=exState.done;
+            const diff=exState.diff||"";
+            html+=`<div class="exercise-item${isDone?' done':''}">
+              <div class="checkbox-zone" onclick="toggleDone(${d},${i})">
+                <div class="checkbox"><svg class="checkmark" viewBox="0 0 10 7"><path d="M1 3.5L3.5 6L9 1"/></svg></div>
               </div>
-            </div>
-          </div>`;
+              <div class="exercise-name">${ex.name}</div>
+              <div class="diff-zone" onclick="togglePicker('${pickerId}',event)">
+                <div class="exercise-weight">${ex.detail}</div>
+                <div style="position:relative;display:inline-flex;">
+                  <button class="difficulty-btn">${diff||'·'}</button>
+                  ${openPicker===pickerId?`
+                  <div class="difficulty-picker" style="right:${pickerPos.right}px;${pickerPos.top!==null?'top:'+pickerPos.top+'px':'bottom:'+pickerPos.bottom+'px'}" onclick="event.stopPropagation()">
+                    ${DIFFICULTIES.map(d2=>`<button class="diff-option" onclick="setDiff(${d},${i},'${d2}')">${d2||'✕'}</button>`).join('')}
+                  </div>`:''}
+                </div>
+              </div>
+            </div>`;
+            i++;
+          }
         }
-      });
+      }
       html+=`</div>`;
     }
 
