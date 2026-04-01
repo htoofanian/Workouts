@@ -1,4 +1,3 @@
-<!DOCTYPE html>
 <html lang="en"><head>
 <meta charset="UTF-8">
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
@@ -136,467 +135,479 @@
     <div class="header-btns">
       <button class="btn btn-gray" id="editBtn" onclick="toggleEdit()">Edit</button>
       <button class="btn btn-gray" id="cancelBtn" onclick="cancelEdit()" style="display: none;">Cancel</button>
-      <button class="btn btn-gray" id="saveBtn" onclick="showSave()">Save</button>
-      <button class="btn btn-orange" id="resetBtn" onclick="showReset()">↺ Reset</button>
+      <button class="btn btn-gray" id="saveBtn" onclick="showSave()" style="display: inline-flex;">Save</button>
+      <button class="btn btn-orange" id="resetBtn" onclick="showReset()" style="display: inline-flex;">↺ Reset</button>
     </div>
   </div>
   <div class="edit-heading" id="editHeading">EDIT ROUTINE</div>
-  <div class="version-info" id="versionInfo"></div>
+  <div class="version-info" id="versionInfo">v38 · Mar 31, 2026</div>
 </header>
 
 <div id="app"><div class="day-block"><div class="day-header">
         <span class="day-name">Monday</span>
         <span class="day-sub">ARMS · Culver</span>
-        <span class="day-progress"><span>0</span>/14</span>
-      </div><div class="progress-bar-wrap"><div class="progress-bar-fill" style="width:0%"></div></div><br><div class="exercise-list"><div class="exercise-item">
-            <div class="checkbox-zone" onclick="toggleDone(0,0)">
-              <div class="checkbox"><svg class="checkmark" viewBox="0 0 10 7"><path d="M1 3.5L3.5 6L9 1"></path></svg></div>
-            </div>
-            <div class="exercise-name">Chest Press</div>
-            <div class="diff-zone" onclick="togglePicker('0_0',event)">
-              <div class="exercise-weight">C65 · M60</div>
-              <div style="position:relative;display:inline-flex;">
-                <button class="difficulty-btn">·</button>
-                
+        <span class="day-progress"><span>0</span>/9</span>
+      </div><div class="progress-bar-wrap"><div class="progress-bar-fill" style="width:0%"></div></div><br><div class="exercise-list"><div class="exercise-group"><div class="exercise-item">
+                  <div class="checkbox-zone" onclick="toggleDone(0,0)">
+                    <div class="checkbox"><svg class="checkmark" viewBox="0 0 10 7"><path d="M1 3.5L3.5 6L9 1"></path></svg></div>
+                  </div>
+                  <div class="exercise-name">Chest Press</div>
+                  <div class="diff-zone" onclick="togglePicker('0_0',event)">
+                    <div class="exercise-weight">C65 · M60</div>
+                    <div style="position:relative;display:inline-flex;">
+                      <button class="difficulty-btn">·</button>
+                      
+                    </div>
+                  </div>
+                </div><div class="exercise-item">
+                  <div class="checkbox-zone" onclick="toggleDone(0,1)">
+                    <div class="checkbox"><svg class="checkmark" viewBox="0 0 10 7"><path d="M1 3.5L3.5 6L9 1"></path></svg></div>
+                  </div>
+                  <div class="exercise-name">Chest Press Up</div>
+                  <div class="diff-zone" onclick="togglePicker('0_1',event)">
+                    <div class="exercise-weight">50</div>
+                    <div style="position:relative;display:inline-flex;">
+                      <button class="difficulty-btn">·</button>
+                      
+                    </div>
+                  </div>
+                </div></div><div class="exercise-item">
+              <div class="checkbox-zone" onclick="toggleDone(0,2)">
+                <div class="checkbox"><svg class="checkmark" viewBox="0 0 10 7"><path d="M1 3.5L3.5 6L9 1"></path></svg></div>
               </div>
-            </div>
-          </div><div class="exercise-item">
-            <div class="checkbox-zone" onclick="toggleDone(0,1)">
-              <div class="checkbox"><svg class="checkmark" viewBox="0 0 10 7"><path d="M1 3.5L3.5 6L9 1"></path></svg></div>
-            </div>
-            <div class="exercise-name">Chest Fly Close</div>
-            <div class="diff-zone" onclick="togglePicker('0_1',event)">
-              <div class="exercise-weight">60</div>
-              <div style="position:relative;display:inline-flex;">
-                <button class="difficulty-btn">·</button>
-                
+              <div class="exercise-name">Chest Fly Close</div>
+              <div class="diff-zone" onclick="togglePicker('0_2',event)">
+                <div class="exercise-weight">60</div>
+                <div style="position:relative;display:inline-flex;">
+                  <button class="difficulty-btn">·</button>
+                  
+                </div>
               </div>
-            </div>
-          </div><div class="exercise-item">
-            <div class="checkbox-zone" onclick="toggleDone(0,2)">
-              <div class="checkbox"><svg class="checkmark" viewBox="0 0 10 7"><path d="M1 3.5L3.5 6L9 1"></path></svg></div>
-            </div>
-            <div class="exercise-name">Triceps Assisted Dip</div>
-            <div class="diff-zone" onclick="togglePicker('0_2',event)">
-              <div class="exercise-weight">70</div>
-              <div style="position:relative;display:inline-flex;">
-                <button class="difficulty-btn">·</button>
-                
+            </div><div class="exercise-item">
+              <div class="checkbox-zone" onclick="toggleDone(0,3)">
+                <div class="checkbox"><svg class="checkmark" viewBox="0 0 10 7"><path d="M1 3.5L3.5 6L9 1"></path></svg></div>
               </div>
-            </div>
-          </div><div class="exercise-item">
-            <div class="checkbox-zone" onclick="toggleDone(0,3)">
-              <div class="checkbox"><svg class="checkmark" viewBox="0 0 10 7"><path d="M1 3.5L3.5 6L9 1"></path></svg></div>
-            </div>
-            <div class="exercise-name">Lateral Pull Down, OR</div>
-            <div class="diff-zone" onclick="togglePicker('0_3',event)">
-              <div class="exercise-weight">70</div>
-              <div style="position:relative;display:inline-flex;">
-                <button class="difficulty-btn">·</button>
-                
+              <div class="exercise-name">Triceps Assisted Dip</div>
+              <div class="diff-zone" onclick="togglePicker('0_3',event)">
+                <div class="exercise-weight">70</div>
+                <div style="position:relative;display:inline-flex;">
+                  <button class="difficulty-btn">·</button>
+                  
+                </div>
               </div>
-            </div>
-          </div><div class="exercise-item">
-            <div class="checkbox-zone" onclick="toggleDone(0,4)">
-              <div class="checkbox"><svg class="checkmark" viewBox="0 0 10 7"><path d="M1 3.5L3.5 6L9 1"></path></svg></div>
-            </div>
-            <div class="exercise-name">Front Rotation Down</div>
-            <div class="diff-zone" onclick="togglePicker('0_4',event)">
-              <div class="exercise-weight">40</div>
-              <div style="position:relative;display:inline-flex;">
-                <button class="difficulty-btn">·</button>
-                
+            </div><div class="exercise-group"><div class="exercise-item">
+                  <div class="checkbox-zone" onclick="toggleDone(0,4)">
+                    <div class="checkbox"><svg class="checkmark" viewBox="0 0 10 7"><path d="M1 3.5L3.5 6L9 1"></path></svg></div>
+                  </div>
+                  <div class="exercise-name">Lateral Pull Down</div>
+                  <div class="diff-zone" onclick="togglePicker('0_4',event)">
+                    <div class="exercise-weight">70</div>
+                    <div style="position:relative;display:inline-flex;">
+                      <button class="difficulty-btn">·</button>
+                      
+                    </div>
+                  </div>
+                </div><div class="exercise-item">
+                  <div class="checkbox-zone" onclick="toggleDone(0,5)">
+                    <div class="checkbox"><svg class="checkmark" viewBox="0 0 10 7"><path d="M1 3.5L3.5 6L9 1"></path></svg></div>
+                  </div>
+                  <div class="exercise-name">Front Rotation Down</div>
+                  <div class="diff-zone" onclick="togglePicker('0_5',event)">
+                    <div class="exercise-weight">40</div>
+                    <div style="position:relative;display:inline-flex;">
+                      <button class="difficulty-btn">·</button>
+                      
+                    </div>
+                  </div>
+                </div></div><div class="exercise-group"><div class="exercise-item">
+                  <div class="checkbox-zone" onclick="toggleDone(0,6)">
+                    <div class="checkbox"><svg class="checkmark" viewBox="0 0 10 7"><path d="M1 3.5L3.5 6L9 1"></path></svg></div>
+                  </div>
+                  <div class="exercise-name">Shoulder Press</div>
+                  <div class="diff-zone" onclick="togglePicker('0_6',event)">
+                    <div class="exercise-weight">C30 · M25</div>
+                    <div style="position:relative;display:inline-flex;">
+                      <button class="difficulty-btn">·</button>
+                      
+                    </div>
+                  </div>
+                </div><div class="exercise-item">
+                  <div class="checkbox-zone" onclick="toggleDone(0,7)">
+                    <div class="checkbox"><svg class="checkmark" viewBox="0 0 10 7"><path d="M1 3.5L3.5 6L9 1"></path></svg></div>
+                  </div>
+                  <div class="exercise-name">Shoulder Laterals</div>
+                  <div class="diff-zone" onclick="togglePicker('0_7',event)">
+                    <div class="exercise-weight">25</div>
+                    <div style="position:relative;display:inline-flex;">
+                      <button class="difficulty-btn">·</button>
+                      
+                    </div>
+                  </div>
+                </div></div><div class="exercise-group"><div class="exercise-item">
+                  <div class="checkbox-zone" onclick="toggleDone(0,8)">
+                    <div class="checkbox"><svg class="checkmark" viewBox="0 0 10 7"><path d="M1 3.5L3.5 6L9 1"></path></svg></div>
+                  </div>
+                  <div class="exercise-name">Row Cable</div>
+                  <div class="diff-zone" onclick="togglePicker('0_8',event)">
+                    <div class="exercise-weight">35 · 7th</div>
+                    <div style="position:relative;display:inline-flex;">
+                      <button class="difficulty-btn">·</button>
+                      
+                    </div>
+                  </div>
+                </div><div class="exercise-item">
+                  <div class="checkbox-zone" onclick="toggleDone(0,9)">
+                    <div class="checkbox"><svg class="checkmark" viewBox="0 0 10 7"><path d="M1 3.5L3.5 6L9 1"></path></svg></div>
+                  </div>
+                  <div class="exercise-name">Row Machine</div>
+                  <div class="diff-zone" onclick="togglePicker('0_9',event)">
+                    <div class="exercise-weight">C60 · M50</div>
+                    <div style="position:relative;display:inline-flex;">
+                      <button class="difficulty-btn">·</button>
+                      
+                    </div>
+                  </div>
+                </div></div><div class="exercise-group"><div class="exercise-item">
+                  <div class="checkbox-zone" onclick="toggleDone(0,10)">
+                    <div class="checkbox"><svg class="checkmark" viewBox="0 0 10 7"><path d="M1 3.5L3.5 6L9 1"></path></svg></div>
+                  </div>
+                  <div class="exercise-name">Triceps Rope</div>
+                  <div class="diff-zone" onclick="togglePicker('0_10',event)">
+                    <div class="exercise-weight">35</div>
+                    <div style="position:relative;display:inline-flex;">
+                      <button class="difficulty-btn">·</button>
+                      
+                    </div>
+                  </div>
+                </div><div class="exercise-item">
+                  <div class="checkbox-zone" onclick="toggleDone(0,11)">
+                    <div class="checkbox"><svg class="checkmark" viewBox="0 0 10 7"><path d="M1 3.5L3.5 6L9 1"></path></svg></div>
+                  </div>
+                  <div class="exercise-name">Triceps Machine</div>
+                  <div class="diff-zone" onclick="togglePicker('0_11',event)">
+                    <div class="exercise-weight">40</div>
+                    <div style="position:relative;display:inline-flex;">
+                      <button class="difficulty-btn">·</button>
+                      
+                    </div>
+                  </div>
+                </div></div><div class="exercise-group"><div class="exercise-item">
+                  <div class="checkbox-zone" onclick="toggleDone(0,12)">
+                    <div class="checkbox"><svg class="checkmark" viewBox="0 0 10 7"><path d="M1 3.5L3.5 6L9 1"></path></svg></div>
+                  </div>
+                  <div class="exercise-name">Bicep Curl</div>
+                  <div class="diff-zone" onclick="togglePicker('0_12',event)">
+                    <div class="exercise-weight">20</div>
+                    <div style="position:relative;display:inline-flex;">
+                      <button class="difficulty-btn">·</button>
+                      
+                    </div>
+                  </div>
+                </div><div class="exercise-item">
+                  <div class="checkbox-zone" onclick="toggleDone(0,13)">
+                    <div class="checkbox"><svg class="checkmark" viewBox="0 0 10 7"><path d="M1 3.5L3.5 6L9 1"></path></svg></div>
+                  </div>
+                  <div class="exercise-name">Bicep Curl Dumbell</div>
+                  <div class="diff-zone" onclick="togglePicker('0_13',event)">
+                    <div class="exercise-weight">12.5</div>
+                    <div style="position:relative;display:inline-flex;">
+                      <button class="difficulty-btn">·</button>
+                      
+                    </div>
+                  </div>
+                </div></div><div class="exercise-item">
+              <div class="checkbox-zone" onclick="toggleDone(0,14)">
+                <div class="checkbox"><svg class="checkmark" viewBox="0 0 10 7"><path d="M1 3.5L3.5 6L9 1"></path></svg></div>
               </div>
-            </div>
-          </div><div class="exercise-item">
-            <div class="checkbox-zone" onclick="toggleDone(0,5)">
-              <div class="checkbox"><svg class="checkmark" viewBox="0 0 10 7"><path d="M1 3.5L3.5 6L9 1"></path></svg></div>
-            </div>
-            <div class="exercise-name">Shoulder Press, OR</div>
-            <div class="diff-zone" onclick="togglePicker('0_5',event)">
-              <div class="exercise-weight">C30 · M25</div>
-              <div style="position:relative;display:inline-flex;">
-                <button class="difficulty-btn">·</button>
-                
+              <div class="exercise-name">Hammer Curl Dumbbell</div>
+              <div class="diff-zone" onclick="togglePicker('0_14',event)">
+                <div class="exercise-weight">12.5</div>
+                <div style="position:relative;display:inline-flex;">
+                  <button class="difficulty-btn">·</button>
+                  
+                </div>
               </div>
-            </div>
-          </div><div class="exercise-item">
-            <div class="checkbox-zone" onclick="toggleDone(0,6)">
-              <div class="checkbox"><svg class="checkmark" viewBox="0 0 10 7"><path d="M1 3.5L3.5 6L9 1"></path></svg></div>
-            </div>
-            <div class="exercise-name">Shoulder Laterals</div>
-            <div class="diff-zone" onclick="togglePicker('0_6',event)">
-              <div class="exercise-weight">25</div>
-              <div style="position:relative;display:inline-flex;">
-                <button class="difficulty-btn">·</button>
-                
-              </div>
-            </div>
-          </div><div class="exercise-item">
-            <div class="checkbox-zone" onclick="toggleDone(0,7)">
-              <div class="checkbox"><svg class="checkmark" viewBox="0 0 10 7"><path d="M1 3.5L3.5 6L9 1"></path></svg></div>
-            </div>
-            <div class="exercise-name">Row Cable, OR</div>
-            <div class="diff-zone" onclick="togglePicker('0_7',event)">
-              <div class="exercise-weight">35 · 7th</div>
-              <div style="position:relative;display:inline-flex;">
-                <button class="difficulty-btn">·</button>
-                
-              </div>
-            </div>
-          </div><div class="exercise-item">
-            <div class="checkbox-zone" onclick="toggleDone(0,8)">
-              <div class="checkbox"><svg class="checkmark" viewBox="0 0 10 7"><path d="M1 3.5L3.5 6L9 1"></path></svg></div>
-            </div>
-            <div class="exercise-name">Row Machine</div>
-            <div class="diff-zone" onclick="togglePicker('0_8',event)">
-              <div class="exercise-weight">C60 · M50</div>
-              <div style="position:relative;display:inline-flex;">
-                <button class="difficulty-btn">·</button>
-                
-              </div>
-            </div>
-          </div><div class="exercise-item">
-            <div class="checkbox-zone" onclick="toggleDone(0,9)">
-              <div class="checkbox"><svg class="checkmark" viewBox="0 0 10 7"><path d="M1 3.5L3.5 6L9 1"></path></svg></div>
-            </div>
-            <div class="exercise-name">Triceps Machine, OR</div>
-            <div class="diff-zone" onclick="togglePicker('0_9',event)">
-              <div class="exercise-weight">40</div>
-              <div style="position:relative;display:inline-flex;">
-                <button class="difficulty-btn">·</button>
-                
-              </div>
-            </div>
-          </div><div class="exercise-item">
-            <div class="checkbox-zone" onclick="toggleDone(0,10)">
-              <div class="checkbox"><svg class="checkmark" viewBox="0 0 10 7"><path d="M1 3.5L3.5 6L9 1"></path></svg></div>
-            </div>
-            <div class="exercise-name">Triceps Rope</div>
-            <div class="diff-zone" onclick="togglePicker('0_10',event)">
-              <div class="exercise-weight">35</div>
-              <div style="position:relative;display:inline-flex;">
-                <button class="difficulty-btn">·</button>
-                
-              </div>
-            </div>
-          </div><div class="exercise-item">
-            <div class="checkbox-zone" onclick="toggleDone(0,11)">
-              <div class="checkbox"><svg class="checkmark" viewBox="0 0 10 7"><path d="M1 3.5L3.5 6L9 1"></path></svg></div>
-            </div>
-            <div class="exercise-name">Bicep Curl, OR</div>
-            <div class="diff-zone" onclick="togglePicker('0_11',event)">
-              <div class="exercise-weight">20</div>
-              <div style="position:relative;display:inline-flex;">
-                <button class="difficulty-btn">·</button>
-                
-              </div>
-            </div>
-          </div><div class="exercise-item">
-            <div class="checkbox-zone" onclick="toggleDone(0,12)">
-              <div class="checkbox"><svg class="checkmark" viewBox="0 0 10 7"><path d="M1 3.5L3.5 6L9 1"></path></svg></div>
-            </div>
-            <div class="exercise-name">Bicep Curl Dumbell</div>
-            <div class="diff-zone" onclick="togglePicker('0_12',event)">
-              <div class="exercise-weight">12.5</div>
-              <div style="position:relative;display:inline-flex;">
-                <button class="difficulty-btn">·</button>
-                
-              </div>
-            </div>
-          </div><div class="exercise-item">
-            <div class="checkbox-zone" onclick="toggleDone(0,13)">
-              <div class="checkbox"><svg class="checkmark" viewBox="0 0 10 7"><path d="M1 3.5L3.5 6L9 1"></path></svg></div>
-            </div>
-            <div class="exercise-name">Hammer Curl Dumbbells</div>
-            <div class="diff-zone" onclick="togglePicker('0_13',event)">
-              <div class="exercise-weight">12.5</div>
-              <div style="position:relative;display:inline-flex;">
-                <button class="difficulty-btn">·</button>
-                
-              </div>
-            </div>
-          </div></div></div><div class="day-block"><div class="day-header">
+            </div></div></div><div class="day-block"><div class="day-header">
         <span class="day-name">Wednesday</span>
         <span class="day-sub">LEGS · Michelson</span>
         <span class="day-progress"><span>0</span>/7</span>
       </div><div class="progress-bar-wrap"><div class="progress-bar-fill" style="width:0%"></div></div><br><div class="exercise-list"><div class="exercise-item">
-            <div class="checkbox-zone" onclick="toggleDone(1,0)">
-              <div class="checkbox"><svg class="checkmark" viewBox="0 0 10 7"><path d="M1 3.5L3.5 6L9 1"></path></svg></div>
-            </div>
-            <div class="exercise-name">Leg Extensions</div>
-            <div class="diff-zone" onclick="togglePicker('1_0',event)">
-              <div class="exercise-weight">50</div>
-              <div style="position:relative;display:inline-flex;">
-                <button class="difficulty-btn">·</button>
-                
+              <div class="checkbox-zone" onclick="toggleDone(1,0)">
+                <div class="checkbox"><svg class="checkmark" viewBox="0 0 10 7"><path d="M1 3.5L3.5 6L9 1"></path></svg></div>
               </div>
-            </div>
-          </div><div class="exercise-item">
-            <div class="checkbox-zone" onclick="toggleDone(1,1)">
-              <div class="checkbox"><svg class="checkmark" viewBox="0 0 10 7"><path d="M1 3.5L3.5 6L9 1"></path></svg></div>
-            </div>
-            <div class="exercise-name">Leg Curls</div>
-            <div class="diff-zone" onclick="togglePicker('1_1',event)">
-              <div class="exercise-weight">C65 · M70</div>
-              <div style="position:relative;display:inline-flex;">
-                <button class="difficulty-btn">·</button>
-                
+              <div class="exercise-name">Leg Extensions</div>
+              <div class="diff-zone" onclick="togglePicker('1_0',event)">
+                <div class="exercise-weight">50</div>
+                <div style="position:relative;display:inline-flex;">
+                  <button class="difficulty-btn">·</button>
+                  
+                </div>
               </div>
-            </div>
-          </div><div class="exercise-item">
-            <div class="checkbox-zone" onclick="toggleDone(1,2)">
-              <div class="checkbox"><svg class="checkmark" viewBox="0 0 10 7"><path d="M1 3.5L3.5 6L9 1"></path></svg></div>
-            </div>
-            <div class="exercise-name">Leg Press</div>
-            <div class="diff-zone" onclick="togglePicker('1_2',event)">
-              <div class="exercise-weight">260</div>
-              <div style="position:relative;display:inline-flex;">
-                <button class="difficulty-btn">·</button>
-                
+            </div><div class="exercise-item">
+              <div class="checkbox-zone" onclick="toggleDone(1,1)">
+                <div class="checkbox"><svg class="checkmark" viewBox="0 0 10 7"><path d="M1 3.5L3.5 6L9 1"></path></svg></div>
               </div>
-            </div>
-          </div><div class="exercise-item">
-            <div class="checkbox-zone" onclick="toggleDone(1,3)">
-              <div class="checkbox"><svg class="checkmark" viewBox="0 0 10 7"><path d="M1 3.5L3.5 6L9 1"></path></svg></div>
-            </div>
-            <div class="exercise-name">Hip Abduction (OUT)</div>
-            <div class="diff-zone" onclick="togglePicker('1_3',event)">
-              <div class="exercise-weight">160</div>
-              <div style="position:relative;display:inline-flex;">
-                <button class="difficulty-btn">·</button>
-                
+              <div class="exercise-name">Leg Curls</div>
+              <div class="diff-zone" onclick="togglePicker('1_1',event)">
+                <div class="exercise-weight">C65 · M70</div>
+                <div style="position:relative;display:inline-flex;">
+                  <button class="difficulty-btn">·</button>
+                  
+                </div>
               </div>
-            </div>
-          </div><div class="exercise-item">
-            <div class="checkbox-zone" onclick="toggleDone(1,4)">
-              <div class="checkbox"><svg class="checkmark" viewBox="0 0 10 7"><path d="M1 3.5L3.5 6L9 1"></path></svg></div>
-            </div>
-            <div class="exercise-name">Hip Adduction (IN)</div>
-            <div class="diff-zone" onclick="togglePicker('1_4',event)">
-              <div class="exercise-weight">220</div>
-              <div style="position:relative;display:inline-flex;">
-                <button class="difficulty-btn">·</button>
-                
+            </div><div class="exercise-item">
+              <div class="checkbox-zone" onclick="toggleDone(1,2)">
+                <div class="checkbox"><svg class="checkmark" viewBox="0 0 10 7"><path d="M1 3.5L3.5 6L9 1"></path></svg></div>
               </div>
-            </div>
-          </div><div class="exercise-item">
-            <div class="checkbox-zone" onclick="toggleDone(1,5)">
-              <div class="checkbox"><svg class="checkmark" viewBox="0 0 10 7"><path d="M1 3.5L3.5 6L9 1"></path></svg></div>
-            </div>
-            <div class="exercise-name">Seated Calves</div>
-            <div class="diff-zone" onclick="togglePicker('1_5',event)">
-              <div class="exercise-weight">45</div>
-              <div style="position:relative;display:inline-flex;">
-                <button class="difficulty-btn">·</button>
-                
+              <div class="exercise-name">Leg Press</div>
+              <div class="diff-zone" onclick="togglePicker('1_2',event)">
+                <div class="exercise-weight">260</div>
+                <div style="position:relative;display:inline-flex;">
+                  <button class="difficulty-btn">·</button>
+                  
+                </div>
               </div>
-            </div>
-          </div><div class="exercise-item">
-            <div class="checkbox-zone" onclick="toggleDone(1,6)">
-              <div class="checkbox"><svg class="checkmark" viewBox="0 0 10 7"><path d="M1 3.5L3.5 6L9 1"></path></svg></div>
-            </div>
-            <div class="exercise-name">Ab Crunch</div>
-            <div class="diff-zone" onclick="togglePicker('1_6',event)">
-              <div class="exercise-weight">3x15 · 40</div>
-              <div style="position:relative;display:inline-flex;">
-                <button class="difficulty-btn">·</button>
-                
+            </div><div class="exercise-item">
+              <div class="checkbox-zone" onclick="toggleDone(1,3)">
+                <div class="checkbox"><svg class="checkmark" viewBox="0 0 10 7"><path d="M1 3.5L3.5 6L9 1"></path></svg></div>
               </div>
-            </div>
-          </div></div></div><div class="day-block"><div class="day-header">
+              <div class="exercise-name">Hip Abduction (OUT)</div>
+              <div class="diff-zone" onclick="togglePicker('1_3',event)">
+                <div class="exercise-weight">160</div>
+                <div style="position:relative;display:inline-flex;">
+                  <button class="difficulty-btn">·</button>
+                  
+                </div>
+              </div>
+            </div><div class="exercise-item">
+              <div class="checkbox-zone" onclick="toggleDone(1,4)">
+                <div class="checkbox"><svg class="checkmark" viewBox="0 0 10 7"><path d="M1 3.5L3.5 6L9 1"></path></svg></div>
+              </div>
+              <div class="exercise-name">Hip Adduction (IN)</div>
+              <div class="diff-zone" onclick="togglePicker('1_4',event)">
+                <div class="exercise-weight">220</div>
+                <div style="position:relative;display:inline-flex;">
+                  <button class="difficulty-btn">·</button>
+                  
+                </div>
+              </div>
+            </div><div class="exercise-item">
+              <div class="checkbox-zone" onclick="toggleDone(1,5)">
+                <div class="checkbox"><svg class="checkmark" viewBox="0 0 10 7"><path d="M1 3.5L3.5 6L9 1"></path></svg></div>
+              </div>
+              <div class="exercise-name">Seated Calves</div>
+              <div class="diff-zone" onclick="togglePicker('1_5',event)">
+                <div class="exercise-weight">45</div>
+                <div style="position:relative;display:inline-flex;">
+                  <button class="difficulty-btn">·</button>
+                  
+                </div>
+              </div>
+            </div><div class="exercise-item">
+              <div class="checkbox-zone" onclick="toggleDone(1,6)">
+                <div class="checkbox"><svg class="checkmark" viewBox="0 0 10 7"><path d="M1 3.5L3.5 6L9 1"></path></svg></div>
+              </div>
+              <div class="exercise-name">Ab Crunch</div>
+              <div class="diff-zone" onclick="togglePicker('1_6',event)">
+                <div class="exercise-weight">3x15 · 40</div>
+                <div style="position:relative;display:inline-flex;">
+                  <button class="difficulty-btn">·</button>
+                  
+                </div>
+              </div>
+            </div></div></div><div class="day-block"><div class="day-header">
         <span class="day-name">Friday</span>
         <span class="day-sub">CORE · Culver</span>
-        <span class="day-progress"><span>0</span>/8</span>
+        <span class="day-progress"><span>0</span>/6</span>
       </div><div class="progress-bar-wrap"><div class="progress-bar-fill" style="width:0%"></div></div><br><div class="exercise-list"><div class="exercise-item">
-            <div class="checkbox-zone" onclick="toggleDone(2,0)">
-              <div class="checkbox"><svg class="checkmark" viewBox="0 0 10 7"><path d="M1 3.5L3.5 6L9 1"></path></svg></div>
-            </div>
-            <div class="exercise-name">Ab Crunch</div>
-            <div class="diff-zone" onclick="togglePicker('2_0',event)">
-              <div class="exercise-weight">3x15 · 40</div>
-              <div style="position:relative;display:inline-flex;">
-                <button class="difficulty-btn">·</button>
-                
+              <div class="checkbox-zone" onclick="toggleDone(2,0)">
+                <div class="checkbox"><svg class="checkmark" viewBox="0 0 10 7"><path d="M1 3.5L3.5 6L9 1"></path></svg></div>
               </div>
-            </div>
-          </div><div class="exercise-item">
-            <div class="checkbox-zone" onclick="toggleDone(2,1)">
-              <div class="checkbox"><svg class="checkmark" viewBox="0 0 10 7"><path d="M1 3.5L3.5 6L9 1"></path></svg></div>
-            </div>
-            <div class="exercise-name">Reverse Bench Crunch</div>
-            <div class="diff-zone" onclick="togglePicker('2_1',event)">
-              <div class="exercise-weight">3x8</div>
-              <div style="position:relative;display:inline-flex;">
-                <button class="difficulty-btn">·</button>
-                
+              <div class="exercise-name">Ab Crunch</div>
+              <div class="diff-zone" onclick="togglePicker('2_0',event)">
+                <div class="exercise-weight">3x15 · 40</div>
+                <div style="position:relative;display:inline-flex;">
+                  <button class="difficulty-btn">·</button>
+                  
+                </div>
               </div>
-            </div>
-          </div><div class="exercise-item">
-            <div class="checkbox-zone" onclick="toggleDone(2,2)">
-              <div class="checkbox"><svg class="checkmark" viewBox="0 0 10 7"><path d="M1 3.5L3.5 6L9 1"></path></svg></div>
-            </div>
-            <div class="exercise-name">Torso Twists</div>
-            <div class="diff-zone" onclick="togglePicker('2_2',event)">
-              <div class="exercise-weight">65</div>
-              <div style="position:relative;display:inline-flex;">
-                <button class="difficulty-btn">·</button>
-                
+            </div><div class="exercise-item">
+              <div class="checkbox-zone" onclick="toggleDone(2,1)">
+                <div class="checkbox"><svg class="checkmark" viewBox="0 0 10 7"><path d="M1 3.5L3.5 6L9 1"></path></svg></div>
               </div>
-            </div>
-          </div><div class="exercise-item">
-            <div class="checkbox-zone" onclick="toggleDone(2,3)">
-              <div class="checkbox"><svg class="checkmark" viewBox="0 0 10 7"><path d="M1 3.5L3.5 6L9 1"></path></svg></div>
-            </div>
-            <div class="exercise-name">Side Bends</div>
-            <div class="diff-zone" onclick="togglePicker('2_3',event)">
-              <div class="exercise-weight">22 · 5th</div>
-              <div style="position:relative;display:inline-flex;">
-                <button class="difficulty-btn">·</button>
-                
+              <div class="exercise-name">Reverse Bench Crunch</div>
+              <div class="diff-zone" onclick="togglePicker('2_1',event)">
+                <div class="exercise-weight">3x8</div>
+                <div style="position:relative;display:inline-flex;">
+                  <button class="difficulty-btn">·</button>
+                  
+                </div>
               </div>
-            </div>
-          </div><div class="exercise-item">
-            <div class="checkbox-zone" onclick="toggleDone(2,4)">
-              <div class="checkbox"><svg class="checkmark" viewBox="0 0 10 7"><path d="M1 3.5L3.5 6L9 1"></path></svg></div>
-            </div>
-            <div class="exercise-name">Rear Deltoid Fly</div>
-            <div class="diff-zone" onclick="togglePicker('2_4',event)">
-              <div class="exercise-weight">50</div>
-              <div style="position:relative;display:inline-flex;">
-                <button class="difficulty-btn">·</button>
-                
+            </div><div class="exercise-group"><div class="exercise-item">
+                  <div class="checkbox-zone" onclick="toggleDone(2,2)">
+                    <div class="checkbox"><svg class="checkmark" viewBox="0 0 10 7"><path d="M1 3.5L3.5 6L9 1"></path></svg></div>
+                  </div>
+                  <div class="exercise-name">Torso Twists</div>
+                  <div class="diff-zone" onclick="togglePicker('2_2',event)">
+                    <div class="exercise-weight">65</div>
+                    <div style="position:relative;display:inline-flex;">
+                      <button class="difficulty-btn">·</button>
+                      
+                    </div>
+                  </div>
+                </div><div class="exercise-item">
+                  <div class="checkbox-zone" onclick="toggleDone(2,3)">
+                    <div class="checkbox"><svg class="checkmark" viewBox="0 0 10 7"><path d="M1 3.5L3.5 6L9 1"></path></svg></div>
+                  </div>
+                  <div class="exercise-name">Side Bends</div>
+                  <div class="diff-zone" onclick="togglePicker('2_3',event)">
+                    <div class="exercise-weight">22 · 5th</div>
+                    <div style="position:relative;display:inline-flex;">
+                      <button class="difficulty-btn">·</button>
+                      
+                    </div>
+                  </div>
+                </div></div><div class="exercise-item">
+              <div class="checkbox-zone" onclick="toggleDone(2,4)">
+                <div class="checkbox"><svg class="checkmark" viewBox="0 0 10 7"><path d="M1 3.5L3.5 6L9 1"></path></svg></div>
               </div>
-            </div>
-          </div><div class="exercise-item">
-            <div class="checkbox-zone" onclick="toggleDone(2,5)">
-              <div class="checkbox"><svg class="checkmark" viewBox="0 0 10 7"><path d="M1 3.5L3.5 6L9 1"></path></svg></div>
-            </div>
-            <div class="exercise-name">Cable Shrugs</div>
-            <div class="diff-zone" onclick="togglePicker('2_5',event)">
-              <div class="exercise-weight"></div>
-              <div style="position:relative;display:inline-flex;">
-                <button class="difficulty-btn">·</button>
-                
+              <div class="exercise-name">Rear Deltoid Fly</div>
+              <div class="diff-zone" onclick="togglePicker('2_4',event)">
+                <div class="exercise-weight">50</div>
+                <div style="position:relative;display:inline-flex;">
+                  <button class="difficulty-btn">·</button>
+                  
+                </div>
               </div>
-            </div>
-          </div><div class="exercise-item">
-            <div class="checkbox-zone" onclick="toggleDone(2,6)">
-              <div class="checkbox"><svg class="checkmark" viewBox="0 0 10 7"><path d="M1 3.5L3.5 6L9 1"></path></svg></div>
-            </div>
-            <div class="exercise-name">Rope Climb</div>
-            <div class="diff-zone" onclick="togglePicker('2_6',event)">
-              <div class="exercise-weight">50</div>
-              <div style="position:relative;display:inline-flex;">
-                <button class="difficulty-btn">·</button>
-                
+            </div><div class="exercise-item">
+              <div class="checkbox-zone" onclick="toggleDone(2,5)">
+                <div class="checkbox"><svg class="checkmark" viewBox="0 0 10 7"><path d="M1 3.5L3.5 6L9 1"></path></svg></div>
               </div>
-            </div>
-          </div><div class="exercise-item">
-            <div class="checkbox-zone" onclick="toggleDone(2,7)">
-              <div class="checkbox"><svg class="checkmark" viewBox="0 0 10 7"><path d="M1 3.5L3.5 6L9 1"></path></svg></div>
-            </div>
-            <div class="exercise-name">Ski ERG</div>
-            <div class="diff-zone" onclick="togglePicker('2_7',event)">
-              <div class="exercise-weight">10</div>
-              <div style="position:relative;display:inline-flex;">
-                <button class="difficulty-btn">·</button>
-                
+              <div class="exercise-name">Cable Shrugs</div>
+              <div class="diff-zone" onclick="togglePicker('2_5',event)">
+                <div class="exercise-weight"></div>
+                <div style="position:relative;display:inline-flex;">
+                  <button class="difficulty-btn">·</button>
+                  
+                </div>
               </div>
-            </div>
-          </div></div></div><div class="day-block"><div class="day-header">
+            </div><div class="exercise-group"><div class="exercise-item">
+                  <div class="checkbox-zone" onclick="toggleDone(2,6)">
+                    <div class="checkbox"><svg class="checkmark" viewBox="0 0 10 7"><path d="M1 3.5L3.5 6L9 1"></path></svg></div>
+                  </div>
+                  <div class="exercise-name">Rope Climb</div>
+                  <div class="diff-zone" onclick="togglePicker('2_6',event)">
+                    <div class="exercise-weight">50</div>
+                    <div style="position:relative;display:inline-flex;">
+                      <button class="difficulty-btn">·</button>
+                      
+                    </div>
+                  </div>
+                </div><div class="exercise-item">
+                  <div class="checkbox-zone" onclick="toggleDone(2,7)">
+                    <div class="checkbox"><svg class="checkmark" viewBox="0 0 10 7"><path d="M1 3.5L3.5 6L9 1"></path></svg></div>
+                  </div>
+                  <div class="exercise-name">Ski ERG</div>
+                  <div class="diff-zone" onclick="togglePicker('2_7',event)">
+                    <div class="exercise-weight">10</div>
+                    <div style="position:relative;display:inline-flex;">
+                      <button class="difficulty-btn">·</button>
+                      
+                    </div>
+                  </div>
+                </div></div></div></div><div class="day-block"><div class="day-header">
         <span class="day-name">Other</span>
         <span class="day-sub">EXERCISES</span>
         <span class="day-progress"><span>0</span>/7</span>
       </div><div class="progress-bar-wrap"><div class="progress-bar-fill" style="width:0%"></div></div><br><div class="exercise-list"><div class="exercise-item">
-            <div class="checkbox-zone" onclick="toggleDone(3,0)">
-              <div class="checkbox"><svg class="checkmark" viewBox="0 0 10 7"><path d="M1 3.5L3.5 6L9 1"></path></svg></div>
-            </div>
-            <div class="exercise-name">Cycling</div>
-            <div class="diff-zone" onclick="togglePicker('3_0',event)">
-              <div class="exercise-weight">1 hour</div>
-              <div style="position:relative;display:inline-flex;">
-                <button class="difficulty-btn">·</button>
-                
+              <div class="checkbox-zone" onclick="toggleDone(3,0)">
+                <div class="checkbox"><svg class="checkmark" viewBox="0 0 10 7"><path d="M1 3.5L3.5 6L9 1"></path></svg></div>
               </div>
-            </div>
-          </div><div class="exercise-item">
-            <div class="checkbox-zone" onclick="toggleDone(3,1)">
-              <div class="checkbox"><svg class="checkmark" viewBox="0 0 10 7"><path d="M1 3.5L3.5 6L9 1"></path></svg></div>
-            </div>
-            <div class="exercise-name">Elliptical + Rowing</div>
-            <div class="diff-zone" onclick="togglePicker('3_1',event)">
-              <div class="exercise-weight">30 min</div>
-              <div style="position:relative;display:inline-flex;">
-                <button class="difficulty-btn">·</button>
-                
+              <div class="exercise-name">Cycling</div>
+              <div class="diff-zone" onclick="togglePicker('3_0',event)">
+                <div class="exercise-weight">1 hour</div>
+                <div style="position:relative;display:inline-flex;">
+                  <button class="difficulty-btn">·</button>
+                  
+                </div>
               </div>
-            </div>
-          </div><div class="exercise-item">
-            <div class="checkbox-zone" onclick="toggleDone(3,2)">
-              <div class="checkbox"><svg class="checkmark" viewBox="0 0 10 7"><path d="M1 3.5L3.5 6L9 1"></path></svg></div>
-            </div>
-            <div class="exercise-name">Standing Stretch</div>
-            <div class="diff-zone" onclick="togglePicker('3_2',event)">
-              <div class="exercise-weight">20 min</div>
-              <div style="position:relative;display:inline-flex;">
-                <button class="difficulty-btn">·</button>
-                
+            </div><div class="exercise-item">
+              <div class="checkbox-zone" onclick="toggleDone(3,1)">
+                <div class="checkbox"><svg class="checkmark" viewBox="0 0 10 7"><path d="M1 3.5L3.5 6L9 1"></path></svg></div>
               </div>
-            </div>
-          </div><div class="exercise-item">
-            <div class="checkbox-zone" onclick="toggleDone(3,3)">
-              <div class="checkbox"><svg class="checkmark" viewBox="0 0 10 7"><path d="M1 3.5L3.5 6L9 1"></path></svg></div>
-            </div>
-            <div class="exercise-name">Floor Stretch</div>
-            <div class="diff-zone" onclick="togglePicker('3_3',event)">
-              <div class="exercise-weight">20 min</div>
-              <div style="position:relative;display:inline-flex;">
-                <button class="difficulty-btn">·</button>
-                
+              <div class="exercise-name">Elliptical + Rowing</div>
+              <div class="diff-zone" onclick="togglePicker('3_1',event)">
+                <div class="exercise-weight">30 min</div>
+                <div style="position:relative;display:inline-flex;">
+                  <button class="difficulty-btn">·</button>
+                  
+                </div>
               </div>
-            </div>
-          </div><div class="exercise-item">
-            <div class="checkbox-zone" onclick="toggleDone(3,4)">
-              <div class="checkbox"><svg class="checkmark" viewBox="0 0 10 7"><path d="M1 3.5L3.5 6L9 1"></path></svg></div>
-            </div>
-            <div class="exercise-name">Core Workout</div>
-            <div class="diff-zone" onclick="togglePicker('3_4',event)">
-              <div class="exercise-weight">5 min</div>
-              <div style="position:relative;display:inline-flex;">
-                <button class="difficulty-btn">·</button>
-                
+            </div><div class="exercise-item">
+              <div class="checkbox-zone" onclick="toggleDone(3,2)">
+                <div class="checkbox"><svg class="checkmark" viewBox="0 0 10 7"><path d="M1 3.5L3.5 6L9 1"></path></svg></div>
               </div>
-            </div>
-          </div><div class="exercise-item">
-            <div class="checkbox-zone" onclick="toggleDone(3,5)">
-              <div class="checkbox"><svg class="checkmark" viewBox="0 0 10 7"><path d="M1 3.5L3.5 6L9 1"></path></svg></div>
-            </div>
-            <div class="exercise-name">Planks + Ab Wheel</div>
-            <div class="diff-zone" onclick="togglePicker('3_5',event)">
-              <div class="exercise-weight">5 min</div>
-              <div style="position:relative;display:inline-flex;">
-                <button class="difficulty-btn">·</button>
-                
+              <div class="exercise-name">Standing Stretch</div>
+              <div class="diff-zone" onclick="togglePicker('3_2',event)">
+                <div class="exercise-weight">20 min</div>
+                <div style="position:relative;display:inline-flex;">
+                  <button class="difficulty-btn">·</button>
+                  
+                </div>
               </div>
-            </div>
-          </div><div class="exercise-item">
-            <div class="checkbox-zone" onclick="toggleDone(3,6)">
-              <div class="checkbox"><svg class="checkmark" viewBox="0 0 10 7"><path d="M1 3.5L3.5 6L9 1"></path></svg></div>
-            </div>
-            <div class="exercise-name">Balance Exercise</div>
-            <div class="diff-zone" onclick="togglePicker('3_6',event)">
-              <div class="exercise-weight">3 min</div>
-              <div style="position:relative;display:inline-flex;">
-                <button class="difficulty-btn">·</button>
-                
+            </div><div class="exercise-item">
+              <div class="checkbox-zone" onclick="toggleDone(3,3)">
+                <div class="checkbox"><svg class="checkmark" viewBox="0 0 10 7"><path d="M1 3.5L3.5 6L9 1"></path></svg></div>
               </div>
-            </div>
-          </div></div></div></div>
+              <div class="exercise-name">Floor Stretch</div>
+              <div class="diff-zone" onclick="togglePicker('3_3',event)">
+                <div class="exercise-weight">20 min</div>
+                <div style="position:relative;display:inline-flex;">
+                  <button class="difficulty-btn">·</button>
+                  
+                </div>
+              </div>
+            </div><div class="exercise-item">
+              <div class="checkbox-zone" onclick="toggleDone(3,4)">
+                <div class="checkbox"><svg class="checkmark" viewBox="0 0 10 7"><path d="M1 3.5L3.5 6L9 1"></path></svg></div>
+              </div>
+              <div class="exercise-name">Core Workout</div>
+              <div class="diff-zone" onclick="togglePicker('3_4',event)">
+                <div class="exercise-weight">5 min</div>
+                <div style="position:relative;display:inline-flex;">
+                  <button class="difficulty-btn">·</button>
+                  
+                </div>
+              </div>
+            </div><div class="exercise-item">
+              <div class="checkbox-zone" onclick="toggleDone(3,5)">
+                <div class="checkbox"><svg class="checkmark" viewBox="0 0 10 7"><path d="M1 3.5L3.5 6L9 1"></path></svg></div>
+              </div>
+              <div class="exercise-name">Planks + Ab Wheel</div>
+              <div class="diff-zone" onclick="togglePicker('3_5',event)">
+                <div class="exercise-weight">5 min</div>
+                <div style="position:relative;display:inline-flex;">
+                  <button class="difficulty-btn">·</button>
+                  
+                </div>
+              </div>
+            </div><div class="exercise-item">
+              <div class="checkbox-zone" onclick="toggleDone(3,6)">
+                <div class="checkbox"><svg class="checkmark" viewBox="0 0 10 7"><path d="M1 3.5L3.5 6L9 1"></path></svg></div>
+              </div>
+              <div class="exercise-name">Balance Exercise</div>
+              <div class="diff-zone" onclick="togglePicker('3_6',event)">
+                <div class="exercise-weight">3 min</div>
+                <div style="position:relative;display:inline-flex;">
+                  <button class="difficulty-btn">·</button>
+                  
+                </div>
+              </div>
+            </div></div></div></div>
 
 <div class="save-popup-overlay" id="savePopup">
   <div class="save-popup">
-    <div id="savePanel1">
+    <div id="savePanel1" style="display: none;">
       <h3>Save</h3>
       <p id="saveMsg">Your edits are saved in this browser.</p>
       <div class="save-popup-btns">
@@ -605,7 +616,7 @@
         <button class="btn-save-cancel" onclick="hideSave()">Cancel</button>
       </div>
     </div>
-    <div id="savePanel2" style="display:none;">
+    <div id="savePanel2" style="">
       <h3>Save to Downloads</h3>
       <div class="save-filename-row">
         <label>Filename</label>
@@ -706,10 +717,6 @@ const DEFAULT_DAYS = [
       {
         "name": "Hammer Curl Dumbbell",
         "detail": "12.5"
-      },
-      {
-        "name": "Ab Crunch",
-        "detail": "3x15 · 40"
       }
     ]
   },
@@ -829,7 +836,7 @@ const DEFAULT_DAYS = [
 ];
 
 const DIFFICULTIES = ["🔴","🟠","🟡","🟢","","🔺","🔻"];
-const DEFAULT_META = {"title":"Workout Log","subtitle":"Maintenance","version":37,"savedDate":""};
+const DEFAULT_META = {"title":"Workout Log","subtitle":"Maintenance","version":38,"savedDate":"Mar 31, 2026"};
 
 // ── Storage (namespaced separately from push-pull app) ─
 function saveDays() { try { localStorage.setItem('maint7_days', JSON.stringify(days)); } catch(e) {} }
