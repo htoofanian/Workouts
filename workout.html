@@ -25,6 +25,13 @@
   * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
   body { background: var(--bg); color: var(--text); font-family: 'DM Sans', sans-serif; font-size: 18px; min-height: 100vh; padding-bottom: 120px; }
 
+  /* Desktop view - constrain to iPhone width */
+  @media (min-width: 600px) {
+    body { background: #1a1a1a; display: flex; justify-content: center; padding-top: 20px; }
+    body::before { content: ''; position: fixed; top: 20px; left: 50%; transform: translateX(-50%); width: 390px; height: calc(100vh - 40px); background: var(--bg); border-radius: 40px; box-shadow: 0 0 0 12px #2a2a2a, 0 20px 60px rgba(0,0,0,0.4); z-index: -1; }
+    #app-container { max-width: 390px; width: 100%; background: var(--bg); border-radius: 40px; overflow: hidden; min-height: calc(100vh - 40px); }
+    header { border-radius: 40px 40px 0 0; }
+  }
 
   header { background: var(--surface); border-bottom: 1px solid var(--border); padding: 10px 16px 8px; position: sticky; top: 0; z-index: 100; }
   .header-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 6px; }
@@ -50,7 +57,7 @@
   /* Normal mode */
   .exercise-item { display: flex; align-items: center; padding: 9px 14px; border-bottom: 1px solid var(--border); gap: 12px; user-select: none; }
   .exercise-item:last-child { border-bottom: none; }
-  .checkbox-zone { display: flex; align-items: center; padding: 8px; margin: -8px; margin-right: 4px; cursor: pointer; flex-shrink: 0; }
+  .checkbox-zone { display: flex; align-items: center; padding: 8px; margin: -8px; cursor: pointer; flex-shrink: 0; }
   .checkbox-zone:active .checkbox { transform: scale(0.9); }
   .checkbox { width: 22px; height: 22px; border-radius: 50%; border: 2px solid var(--border); display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: all 0.2s; background: transparent; }
   .exercise-item.done .checkbox { background: #ff8c00; border-color: #ff8c00; }
@@ -97,10 +104,10 @@
   .btn-save-download { background: var(--blue); color: #fff; }
   .btn-save-cancel { background: transparent; color: var(--muted); font-size: 14px; padding: 8px; }
 
-  .header-edit-title { font-family: 'Bebas Neue', sans-serif; font-size: 24px; letter-spacing: 2px; color: var(--accent); background: transparent; border: none; border-bottom: 1.5px solid var(--accent); outline: none; width: 160px; padding: 0; line-height: 1; }
-  .header-edit-sub { font-size: 13px; font-weight: 700; color: var(--muted); letter-spacing: 1.5px; text-transform: uppercase; background: transparent; border: none; border-bottom: 1.5px solid var(--border); outline: none; width: 140px; padding: 0; margin-top: 2px; font-family: 'DM Sans', sans-serif; }
-  .day-edit-name { font-family: 'Bebas Neue', sans-serif; font-size: 20px; letter-spacing: 2px; color: var(--accent); background: transparent; border: none; border-bottom: 1.5px solid var(--accent); outline: none; flex: 1; min-width: 0; padding: 0; }
-  .day-edit-sub { font-size: 14px; font-weight: 700; color: var(--muted); letter-spacing: 1px; text-transform: uppercase; background: transparent; border: none; border-bottom: 1.5px solid var(--border); outline: none; flex: 2; min-width: 0; padding: 0; font-family: 'DM Sans', sans-serif; }
+  .header-edit-title { font-family: 'Bebas Neue', sans-serif; font-size: 24px; letter-spacing: 2px; color: var(--accent); background: transparent; border: none; outline: none; width: 140px; padding: 0; line-height: 1; }
+  .header-edit-sub { font-size: 13px; font-weight: 700; color: var(--muted); letter-spacing: 1.5px; text-transform: uppercase; background: transparent; border: none; outline: none; width: 140px; padding: 0; margin-top: 2px; font-family: 'DM Sans', sans-serif; }
+  .day-edit-name { font-family: 'Bebas Neue', sans-serif; font-size: 20px; letter-spacing: 2px; color: var(--accent); background: transparent; border: none; outline: none; padding: 0; }
+  .day-edit-sub { font-size: 16px; font-weight: 700; color: var(--muted); letter-spacing: 1px; text-transform: uppercase; background: transparent; border: none; outline: none; padding: 0; font-family: 'DM Sans', sans-serif; }
   .save-filename-row { margin-bottom: 14px; }
   .save-filename-row label { font-size: 13px; color: var(--muted); font-weight: 600; display: block; margin-bottom: 4px; }
   .save-filename-input { width: 100%; border: 1.5px solid var(--border); border-radius: 8px; padding: 8px 10px; font-family: 'DM Sans', sans-serif; font-size: 14px; color: var(--text); background: var(--bg); outline: none; }
@@ -123,7 +130,7 @@
 </head>
 <body>
 
-
+<div id="app-container">
 <header>
   <div class="header-top">
     <div>
@@ -133,8 +140,8 @@
     <div class="header-btns">
       <button class="btn btn-gray" id="editBtn" onclick="toggleEdit()">Edit</button>
       <button class="btn btn-gray" id="cancelBtn" onclick="cancelEdit()" style="display:none;">Cancel</button>
-      <button class="btn btn-gray" onclick="showSave()">Save</button>
-      <button class="btn btn-orange" onclick="showReset()">↺ Reset</button>
+      <button class="btn btn-gray" id="saveBtn" onclick="showSave()">Save</button>
+      <button class="btn btn-orange" id="resetBtn" onclick="showReset()">↺ Reset</button>
     </div>
   </div>
   <div class="edit-heading" id="editHeading">EDIT ROUTINE</div>
@@ -593,6 +600,8 @@
   </div>
 </div>
 
+</div><!-- end app-container -->
+
 <script>
 const DEFAULT_DAYS = [
   {
@@ -778,15 +787,15 @@ const DEFAULT_DAYS = [
 ];
 
 const DIFFICULTIES = ["🔴","🟠","🟡","🟢","","🔺","🔻"];
-const DEFAULT_META = {"title":"Workout Log","subtitle":"Push / Pull","version":18,"savedDate":""};
+const DEFAULT_META = {"title":"Workout Log","subtitle":"Push / Pull","version":21,"savedDate":""};
 
 // ── Storage ───────────────────────────────────────────
-function saveDays() { try { localStorage.setItem('wl_days', JSON.stringify(days)); } catch(e) {} }
-function loadDays() { try { const s = localStorage.getItem('wl_days'); return s ? JSON.parse(s) : JSON.parse(JSON.stringify(DEFAULT_DAYS)); } catch { return JSON.parse(JSON.stringify(DEFAULT_DAYS)); } }
-function saveState() { try { localStorage.setItem('wl_state', JSON.stringify(state)); } catch(e) {} }
-function loadState() { try { const s = localStorage.getItem('wl_state'); return s ? JSON.parse(s) : {}; } catch { return {}; } }
-function saveMeta() { try { localStorage.setItem('wl_meta', JSON.stringify(meta)); } catch(e) {} }
-function loadMeta() { try { const s = localStorage.getItem('wl_meta'); return s ? JSON.parse(s) : JSON.parse(JSON.stringify(DEFAULT_META)); } catch { return JSON.parse(JSON.stringify(DEFAULT_META)); } }
+function saveDays() { try { localStorage.setItem('wl2_days', JSON.stringify(days)); } catch(e) {} }
+function loadDays() { try { const s = localStorage.getItem('wl2_days'); return s ? JSON.parse(s) : JSON.parse(JSON.stringify(DEFAULT_DAYS)); } catch { return JSON.parse(JSON.stringify(DEFAULT_DAYS)); } }
+function saveState() { try { localStorage.setItem('wl2_state', JSON.stringify(state)); } catch(e) {} }
+function loadState() { try { const s = localStorage.getItem('wl2_state'); return s ? JSON.parse(s) : {}; } catch { return {}; } }
+function saveMeta() { try { localStorage.setItem('wl2_meta', JSON.stringify(meta)); } catch(e) {} }
+function loadMeta() { try { const s = localStorage.getItem('wl2_meta'); return s ? JSON.parse(s) : JSON.parse(JSON.stringify(DEFAULT_META)); } catch { return JSON.parse(JSON.stringify(DEFAULT_META)); } }
 
 let days = loadDays();
 let state = loadState();
@@ -867,6 +876,10 @@ function toggleEdit(){
   btn.className=editMode?'btn btn-blue':'btn btn-gray';
   const cancelBtn=document.getElementById('cancelBtn');
   if(cancelBtn) cancelBtn.style.display=editMode?'inline-flex':'none';
+  const saveBtn=document.getElementById('saveBtn');
+  const resetBtn=document.getElementById('resetBtn');
+  if(saveBtn) saveBtn.style.display=editMode?'none':'inline-flex';
+  if(resetBtn) resetBtn.style.display=editMode?'none':'inline-flex';
   renderHeader();
   render();
 }
@@ -882,6 +895,10 @@ function cancelEdit(){
   btn.textContent='Edit';
   btn.className='btn btn-gray';
   document.getElementById('cancelBtn').style.display='none';
+  const saveBtn=document.getElementById('saveBtn');
+  const resetBtn=document.getElementById('resetBtn');
+  if(saveBtn) saveBtn.style.display='inline-flex';
+  if(resetBtn) resetBtn.style.display='inline-flex';
   renderHeader();
   render();
 }
@@ -911,6 +928,7 @@ function addExercise(d){
 
 // ── Drag to reorder ──────────────────────────────────
 let dragState = null;
+let autoScrollInterval = null;
 
 function startDrag(clientY, d, fromIdx) {
   flushInputs();
@@ -942,9 +960,42 @@ function updateDrag(clientY) {
     row.style.transform = shift ? `translateY(${shift}px)` : '';
   });
   dragState.currentIdx = newIdx;
+  
+  // Auto-scroll when near edges
+  const scrollZone = 100;
+  const scrollSpeed = 8;
+  if (autoScrollInterval) {
+    clearInterval(autoScrollInterval);
+    autoScrollInterval = null;
+  }
+  
+  if (clientY < scrollZone) {
+    // Near top - scroll up
+    autoScrollInterval = setInterval(() => {
+      window.scrollBy(0, -scrollSpeed);
+      if (window.scrollY === 0) {
+        clearInterval(autoScrollInterval);
+        autoScrollInterval = null;
+      }
+    }, 16);
+  } else if (clientY > window.innerHeight - scrollZone) {
+    // Near bottom - scroll down
+    autoScrollInterval = setInterval(() => {
+      const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
+      window.scrollBy(0, scrollSpeed);
+      if (window.scrollY >= maxScroll) {
+        clearInterval(autoScrollInterval);
+        autoScrollInterval = null;
+      }
+    }, 16);
+  }
 }
 
 function endDrag() {
+  if (autoScrollInterval) {
+    clearInterval(autoScrollInterval);
+    autoScrollInterval = null;
+  }
   if (!dragState) return;
   const { d, fromIdx, currentIdx, rows } = dragState;
   dragState = null;
