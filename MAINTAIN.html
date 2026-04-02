@@ -631,7 +631,7 @@
       <h3>Save to Downloads</h3>
       <div class="save-filename-row">
         <label>Filename</label>
-        <input class="save-filename-input" id="downloadFilename" type="text" value="maintenance-vxx.html">
+        <input class="save-filename-input" id="downloadFilename" type="text" value="MAINTAIN-vxx.html">
       </div>
       <div class="save-popup-btns">
         <button class="btn-save-download" onclick="confirmSaveDownload()">Download</button>
@@ -1097,7 +1097,7 @@ document.addEventListener('mouseup', onMouseUp);
 function showSave(){ if(editMode) flushInputs(); document.getElementById('saveMsg').textContent='Your edits are saved in this browser.'; showMainPanel(); document.getElementById('savePopup').classList.add('visible'); }
 function hideSave(){ document.getElementById('savePopup').classList.remove('visible'); }
 function showMainPanel(){ document.getElementById('savePanel1').style.display=''; document.getElementById('savePanel2').style.display='none'; }
-function showDownloadPanel(){ document.getElementById('savePanel1').style.display='none'; document.getElementById('savePanel2').style.display=''; document.getElementById('downloadFilename').value='maintenance-v'+((meta.version||31)+1)+'.html'; }
+function showDownloadPanel(){ document.getElementById('savePanel1').style.display='none'; document.getElementById('savePanel2').style.display=''; document.getElementById('downloadFilename').value='MAINTAIN-v'+((meta.version||31)+1)+'.html'; }
 function confirmSaveLocal(){
   saveState(); saveDays(); saveMeta();
   document.getElementById('saveMsg').textContent='✓ Saved!';
@@ -1105,7 +1105,7 @@ function confirmSaveLocal(){
 }
 function confirmSaveDownload(){
   if(editMode) flushInputs();
-  const filename = document.getElementById('downloadFilename').value.trim() || 'maintenance-vxx.html';
+  const filename = document.getElementById('downloadFilename').value.trim() || 'MAINTAIN-vxx.html';
   meta.version = (meta.version || 31) + 1;
   meta.savedDate = new Date().toLocaleDateString('en-US', {month:'short', day:'numeric', year:'numeric'});
   saveMeta();
