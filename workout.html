@@ -29,7 +29,7 @@
   @media (min-width: 600px) {
     body { background: #1a1a1a; display: flex; justify-content: center; padding-top: 20px; }
     body::before { content: ''; position: fixed; top: 20px; left: 50%; transform: translateX(-50%); width: 390px; height: calc(100vh - 40px); background: var(--bg); border-radius: 40px; box-shadow: 0 0 0 12px #2a2a2a, 0 20px 60px rgba(0,0,0,0.4); z-index: -1; }
-    #app-container { max-width: 390px; width: 100%; background: var(--bg); border-radius: 40px; overflow: hidden; min-height: calc(100vh - 40px); }
+    #app-container { max-width: 390px; width: 100%; background: var(--bg); min-height: calc(100vh - 40px); }
     header { border-radius: 40px 40px 0 0; }
   }
 
@@ -787,7 +787,7 @@ const DEFAULT_DAYS = [
 ];
 
 const DIFFICULTIES = ["🔴","🟠","🟡","🟢","","🔺","🔻"];
-const DEFAULT_META = {"title":"Workout Log","subtitle":"Push / Pull","version":21,"savedDate":""};
+const DEFAULT_META = {"title":"Workout Log","subtitle":"Push / Pull","version":22,"savedDate":""};
 
 // ── Storage ───────────────────────────────────────────
 function saveDays() { try { localStorage.setItem('wl2_days', JSON.stringify(days)); } catch(e) {} }
