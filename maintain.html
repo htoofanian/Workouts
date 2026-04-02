@@ -24,6 +24,13 @@
   * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
   body { background: var(--bg); color: var(--text); font-family: 'DM Sans', sans-serif; font-size: 18px; min-height: 100vh; padding-bottom: 120px; }
 
+  /* Desktop view - constrain to iPhone width */
+  @media (min-width: 600px) {
+    body { background: #1a1a1a; display: flex; justify-content: center; padding-top: 20px; }
+    body::before { content: ''; position: fixed; top: 20px; left: 50%; transform: translateX(-50%); width: 390px; height: calc(100vh - 40px); background: var(--bg); border-radius: 40px; box-shadow: 0 0 0 12px #2a2a2a, 0 20px 60px rgba(0,0,0,0.4); z-index: -1; }
+    #app-container { max-width: 390px; width: 100%; background: var(--bg); min-height: calc(100vh - 40px); }
+    header { border-radius: 40px 40px 0 0; }
+  }
 
   header { background: var(--surface); border-bottom: 1px solid var(--border); padding: 10px 16px 8px; position: sticky; top: 0; z-index: 100; }
   .header-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 6px; }
@@ -125,7 +132,7 @@
 </head>
 <body>
 
-
+<div id="app-container">
 <header>
   <div class="header-top">
     <div>
@@ -639,6 +646,8 @@
   </div>
 </div>
 
+</div><!-- end app-container -->
+
 <script>
 const DEFAULT_DAYS = [
   {
@@ -646,6 +655,10 @@ const DEFAULT_DAYS = [
     "type": "ARMS",
     "gym": "Culver",
     "exercises": [
+      {
+        "name": "Chest Fly Close",
+        "detail": "60"
+      },
       {
         "name": "Chest Press",
         "detail": "C65 · M60",
@@ -655,14 +668,6 @@ const DEFAULT_DAYS = [
         "name": "Chest Press Up",
         "detail": "50",
         "group": "chest_press"
-      },
-      {
-        "name": "Chest Fly Close",
-        "detail": "60"
-      },
-      {
-        "name": "Triceps Assisted Dip",
-        "detail": "70"
       },
       {
         "name": "Lateral Pull Down",
@@ -705,6 +710,11 @@ const DEFAULT_DAYS = [
         "group": "triceps"
       },
       {
+        "name": "Triceps Assisted Dip",
+        "detail": "70",
+        "group": "triceps"
+      },
+      {
         "name": "Bicep Curl",
         "detail": "20",
         "group": "biceps"
@@ -716,7 +726,8 @@ const DEFAULT_DAYS = [
       },
       {
         "name": "Hammer Curl Dumbbell",
-        "detail": "12.5"
+        "detail": "12.5",
+        "group": "biceps"
       }
     ]
   },
@@ -836,15 +847,15 @@ const DEFAULT_DAYS = [
 ];
 
 const DIFFICULTIES = ["🔴","🟠","🟡","🟢","","🔺","🔻"];
-const DEFAULT_META = {"title":"Workout Log","subtitle":"Maintenance","version":38,"savedDate":"Mar 31, 2026"};
+const DEFAULT_META = {"title":"Workout Log","subtitle":"Maintenance","version":41,"savedDate":""};
 
 // ── Storage (namespaced separately from push-pull app) ─
-function saveDays() { try { localStorage.setItem('maint7_days', JSON.stringify(days)); } catch(e) {} }
-function loadDays() { try { const s = localStorage.getItem('maint7_days'); return s ? JSON.parse(s) : JSON.parse(JSON.stringify(DEFAULT_DAYS)); } catch { return JSON.parse(JSON.stringify(DEFAULT_DAYS)); } }
-function saveState() { try { localStorage.setItem('maint7_state', JSON.stringify(state)); } catch(e) {} }
-function loadState() { try { const s = localStorage.getItem('maint7_state'); return s ? JSON.parse(s) : {}; } catch { return {}; } }
-function saveMeta() { try { localStorage.setItem('maint7_meta', JSON.stringify(meta)); } catch(e) {} }
-function loadMeta() { try { const s = localStorage.getItem('maint7_meta'); return s ? JSON.parse(s) : JSON.parse(JSON.stringify(DEFAULT_META)); } catch { return JSON.parse(JSON.stringify(DEFAULT_META)); } }
+function saveDays() { try { localStorage.setItem('maint9_days', JSON.stringify(days)); } catch(e) {} }
+function loadDays() { try { const s = localStorage.getItem('maint9_days'); return s ? JSON.parse(s) : JSON.parse(JSON.stringify(DEFAULT_DAYS)); } catch { return JSON.parse(JSON.stringify(DEFAULT_DAYS)); } }
+function saveState() { try { localStorage.setItem('maint9_state', JSON.stringify(state)); } catch(e) {} }
+function loadState() { try { const s = localStorage.getItem('maint9_state'); return s ? JSON.parse(s) : {}; } catch { return {}; } }
+function saveMeta() { try { localStorage.setItem('maint9_meta', JSON.stringify(meta)); } catch(e) {} }
+function loadMeta() { try { const s = localStorage.getItem('maint9_meta'); return s ? JSON.parse(s) : JSON.parse(JSON.stringify(DEFAULT_META)); } catch { return JSON.parse(JSON.stringify(DEFAULT_META)); } }
 
 let days = loadDays();
 let state = loadState();
@@ -978,6 +989,7 @@ function addExercise(d){
 
 // ── Drag to reorder ──────────────────────────────────
 let dragState = null;
+let autoScrollInterval = null;
 
 function startDrag(clientY, d, fromIdx) {
   flushInputs();
@@ -1009,9 +1021,42 @@ function updateDrag(clientY) {
     row.style.transform = shift ? `translateY(${shift}px)` : '';
   });
   dragState.currentIdx = newIdx;
+  
+  // Auto-scroll when near edges
+  const scrollZone = 100;
+  const scrollSpeed = 8;
+  if (autoScrollInterval) {
+    clearInterval(autoScrollInterval);
+    autoScrollInterval = null;
+  }
+  
+  if (clientY < scrollZone) {
+    // Near top - scroll up
+    autoScrollInterval = setInterval(() => {
+      window.scrollBy(0, -scrollSpeed);
+      if (window.scrollY === 0) {
+        clearInterval(autoScrollInterval);
+        autoScrollInterval = null;
+      }
+    }, 16);
+  } else if (clientY > window.innerHeight - scrollZone) {
+    // Near bottom - scroll down
+    autoScrollInterval = setInterval(() => {
+      const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
+      window.scrollBy(0, scrollSpeed);
+      if (window.scrollY >= maxScroll) {
+        clearInterval(autoScrollInterval);
+        autoScrollInterval = null;
+      }
+    }, 16);
+  }
 }
 
 function endDrag() {
+  if (autoScrollInterval) {
+    clearInterval(autoScrollInterval);
+    autoScrollInterval = null;
+  }
   if (!dragState) return;
   const { d, fromIdx, currentIdx, rows } = dragState;
   dragState = null;
