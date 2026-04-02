@@ -53,6 +53,10 @@
   .progress-bar-fill { height: 100%; background: var(--accent); border-radius: 2px; transition: width 0.4s ease; }
 
   .exercise-list { background: var(--surface); border-radius: 14px; overflow: hidden; border: 1px solid var(--border); }
+  .exercise-group { border: 2px solid var(--blue); border-radius: 12px; margin: 8px 8px 0 8px; overflow: hidden; }
+  .exercise-group .exercise-item { border-bottom: 1px solid var(--border); }
+  .exercise-group .exercise-item:last-child { border-bottom: none; }
+  .exercise-group + .exercise-item { border-top: 1px solid var(--border); margin-top: 8px; }
 
   /* Normal mode */
   .exercise-item { display: flex; align-items: center; padding: 9px 14px; border-bottom: 1px solid var(--border); gap: 12px; user-select: none; }
@@ -585,7 +589,7 @@
       <h3>Save to Downloads</h3>
       <div class="save-filename-row">
         <label>Filename</label>
-        <input class="save-filename-input" id="downloadFilename" type="text" value="workout-vxx.html">
+        <input class="save-filename-input" id="downloadFilename" type="text" value="WORKOUT-vxx.html">
       </div>
       <div class="save-popup-btns">
         <button class="btn-save-download" onclick="confirmSaveDownload()">Download</button>
@@ -1044,7 +1048,7 @@ document.addEventListener('mouseup', onMouseUp);
 function showSave(){ if(editMode) flushInputs(); document.getElementById('saveMsg').textContent='Your edits are saved in this browser.'; showMainPanel(); document.getElementById('savePopup').classList.add('visible'); }
 function hideSave(){ document.getElementById('savePopup').classList.remove('visible'); }
 function showMainPanel(){ document.getElementById('savePanel1').style.display=''; document.getElementById('savePanel2').style.display='none'; }
-function showDownloadPanel(){ document.getElementById('savePanel1').style.display='none'; document.getElementById('savePanel2').style.display=''; document.getElementById('downloadFilename').value='workout-v'+((meta.version||18)+1)+'.html'; }
+function showDownloadPanel(){ document.getElementById('savePanel1').style.display='none'; document.getElementById('savePanel2').style.display=''; document.getElementById('downloadFilename').value='WORKOUT-v'+((meta.version||18)+1)+'.html'; }
 function confirmSaveLocal(){
   saveState(); saveDays(); saveMeta();
   document.getElementById('saveMsg').textContent='✓ Saved!';
@@ -1052,7 +1056,7 @@ function confirmSaveLocal(){
 }
 function confirmSaveDownload(){
   if(editMode) flushInputs();
-  const filename = document.getElementById('downloadFilename').value.trim() || 'workout-vxx.html';
+  const filename = document.getElementById('downloadFilename').value.trim() || 'WORKOUT-vxx.html';
   meta.version = (meta.version || 18) + 1;
   meta.savedDate = new Date().toLocaleDateString('en-US', {month:'short', day:'numeric', year:'numeric'});
   saveMeta();
@@ -1161,49 +1165,96 @@ function render(){
 
     if(total>0){
       html+=`<br><div class="exercise-list">`;
-      dayData.exercises.forEach((ex, e) => {
+      let i = 0;
+      while (i < dayData.exercises.length) {
+        const ex = dayData.exercises[i];
         if (editMode) {
-          const isGrouped = (ex.groupWithNext) || (e > 0 && dayData.exercises[e-1].groupWithNext);
+          const isGrouped = (ex.groupWithNext) || (i > 0 && dayData.exercises[i-1].groupWithNext);
           const groupedClass = isGrouped ? ' grouped' : '';
-          html+=`<div class="edit-row${groupedClass}" data-d="${d}" data-e="${e}">
-              <div class="drag-handle" id="handle_${d}_${e}" style="grid-row:1;grid-column:1;">
+          html+=`<div class="edit-row${groupedClass}" data-d="${d}" data-e="${i}">
+              <div class="drag-handle" id="handle_${d}_${i}" style="grid-row:1;grid-column:1;">
                 <span></span><span></span><span></span>
               </div>
               <input class="edit-input name-input" type="text" value="${ex.name.replace(/"/g,'&quot;')}" placeholder="Exercise name"
-                onchange="days[${d}].exercises[${e}].name=this.value;saveDays();" style="grid-row:1;grid-column:2;">
-              <button class="delete-btn" onclick="deleteExercise(${d},${e})" style="grid-row:1/span 2;grid-column:3;">🗑</button>
+                onchange="days[${d}].exercises[${i}].name=this.value;saveDays();" style="grid-row:1;grid-column:2;">
+              <button class="delete-btn" onclick="deleteExercise(${d},${i})" style="grid-row:1/span 2;grid-column:3;">🗑</button>
               <div style="grid-row:2;grid-column:1;display:flex;align-items:center;margin-right:4px;">
                 <input type="checkbox" ${ex.groupWithNext?'checked':''} 
-                  onchange="days[${d}].exercises[${e}].groupWithNext=this.checked;saveDays();render();"
+                  onchange="days[${d}].exercises[${i}].groupWithNext=this.checked;saveDays();render();"
                   style="width:14px;height:14px;cursor:pointer;" title="Group with next">
                 <span style="font-size:13px;margin-left:1px;">⬇</span>
               </div>
               <input class="edit-input weight-input" type="text" value="${ex.detail.replace(/"/g,'&quot;')}" placeholder="Sets · reps · weight"
-                onchange="days[${d}].exercises[${e}].detail=this.value;saveDays();" style="grid-row:2;grid-column:2;">
+                onchange="days[${d}].exercises[${i}].detail=this.value;saveDays();" style="grid-row:2;grid-column:2;">
             </div>`;
+          i++;
         } else {
-          const exState=getEx(d,e);
-          const pickerId=`${d}_${e}`;
-          const isDone=exState.done;
-          const diff=exState.diff||"";
-          html+=`<div class="exercise-item${isDone?' done':''}">
-            <div class="checkbox-zone" onclick="toggleDone(${d},${e})">
-              <div class="checkbox"><svg class="checkmark" viewBox="0 0 10 7"><path d="M1 3.5L3.5 6L9 1"/></svg></div>
-            </div>
-            <div class="exercise-name">${ex.name}</div>
-            <div class="diff-zone" onclick="togglePicker('${pickerId}',event)">
-              <div class="exercise-weight">${ex.detail}</div>
-              <div style="position:relative;display:inline-flex;">
-                <button class="difficulty-btn">${diff||'⬤'}</button>
-                ${openPicker===pickerId?`
-                <div class="difficulty-picker" style="right:${pickerPos.right}px;${pickerPos.top!==null?'top:'+pickerPos.top+'px':'bottom:'+pickerPos.bottom+'px'}" onclick="event.stopPropagation()">
-                  ${DIFFICULTIES.map(d2=>`<button class="diff-option" onclick="setDiff(${d},${e},'${d2}')">${d2==='⬤'?'×':d2}</button>`).join('')}
-                </div>`:''}
+          // Check if this exercise starts a group (has groupWithNext)
+          if (ex.groupWithNext) {
+            // Find all exercises in this group
+            const groupExercises = [];
+            let j = i;
+            // Add first exercise
+            groupExercises.push({ ex: dayData.exercises[j], index: j });
+            j++;
+            // Continue while previous exercise has groupWithNext
+            while (j < dayData.exercises.length && dayData.exercises[j-1].groupWithNext) {
+              groupExercises.push({ ex: dayData.exercises[j], index: j });
+              j++;
+            }
+            
+            // Render as group with blue border
+            html += `<div class="exercise-group">`;
+              groupExercises.forEach(({ ex: gex, index: e }) => {
+                const exState=getEx(d,e);
+                const pickerId=`${d}_${e}`;
+                const isDone=exState.done;
+                const diff=exState.diff||"";
+                html+=`<div class="exercise-item${isDone?' done':''}">
+                  <div class="checkbox-zone" onclick="toggleDone(${d},${e})">
+                    <div class="checkbox"><svg class="checkmark" viewBox="0 0 10 7"><path d="M1 3.5L3.5 6L9 1"/></svg></div>
+                  </div>
+                  <div class="exercise-name">${gex.name}</div>
+                  <div class="diff-zone" onclick="togglePicker('${pickerId}',event)">
+                    <div class="exercise-weight">${gex.detail}</div>
+                    <div style="position:relative;display:inline-flex;">
+                      <button class="difficulty-btn">${diff||'⬤'}</button>
+                      ${openPicker===pickerId?`
+                      <div class="difficulty-picker" style="right:${pickerPos.right}px;${pickerPos.top!==null?'top:'+pickerPos.top+'px':'bottom:'+pickerPos.bottom+'px'}" onclick="event.stopPropagation()">
+                        ${DIFFICULTIES.map(d2=>`<button class="diff-option" onclick="setDiff(${d},${e},'${d2}')">${d2==='⬤'?'×':d2}</button>`).join('')}
+                      </div>`:''}
+                    </div>
+                  </div>
+                </div>`;
+              });
+              html += `</div>`;
+              i = j; // Skip past all grouped exercises
+          } else {
+            // Render single exercise
+            const exState=getEx(d,i);
+            const pickerId=`${d}_${i}`;
+            const isDone=exState.done;
+            const diff=exState.diff||"";
+            html+=`<div class="exercise-item${isDone?' done':''}">
+              <div class="checkbox-zone" onclick="toggleDone(${d},${i})">
+                <div class="checkbox"><svg class="checkmark" viewBox="0 0 10 7"><path d="M1 3.5L3.5 6L9 1"/></svg></div>
               </div>
-            </div>
-          </div>`;
+              <div class="exercise-name">${ex.name}</div>
+              <div class="diff-zone" onclick="togglePicker('${pickerId}',event)">
+                <div class="exercise-weight">${ex.detail}</div>
+                <div style="position:relative;display:inline-flex;">
+                  <button class="difficulty-btn">${diff||'⬤'}</button>
+                  ${openPicker===pickerId?`
+                  <div class="difficulty-picker" style="right:${pickerPos.right}px;${pickerPos.top!==null?'top:'+pickerPos.top+'px':'bottom:'+pickerPos.bottom+'px'}" onclick="event.stopPropagation()">
+                    ${DIFFICULTIES.map(d2=>`<button class="diff-option" onclick="setDiff(${d},${i},'${d2}')">${d2==='⬤'?'×':d2}</button>`).join('')}
+                  </div>`:''}
+                </div>
+              </div>
+            </div>`;
+            i++;
+          }
         }
-      });
+      }
       html+=`</div>`;
     }
 
