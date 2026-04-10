@@ -1,5 +1,5 @@
 # Workouts
-Gym Workout trackers - HTML files - Designed for phones, but also work on computers and iPads.  On iphone or ipad, the link below should be saved to your home page.
+Gym Workout trackers - HTML files - Designed for phones, but also work on computers and iPads.  On iphone or ipad, open the link below on your browser and save it to your home page.
 
 The button on the right of each exercises shows whether the exercise was done.  The button on the right indicates difficulty, or whether the weight or reps should be increased or decreased.  The default rep is 12x3 if not indicated. Reset button clear all done exercises, but does not erase the last difficulty level recorded.
 
