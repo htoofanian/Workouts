@@ -6,6 +6,8 @@ The dropdown below the heading selects between (i) a push/pull/leg days routine,
 
 These exercises can be edited, added, deleted or reordered using the Edit button. Exercise groups can be added or removed.  Day titles can also be edited, and additional days added (up to 7 days total). Edits are automatically saved locally to each device only, and will remain the next time the file/link is opened.  On a link saved to your home screen, these edits will not change the original source file linked to on github or any other location or device.  To save your edits to a revised  file that can be shared or used on other devices, select Save to Downloads, then move the downloaded file to your desired location.  
 
+You should edit the exercises to suit your needs.  The exercises focus on machine training, which is my preferred method.  Particularly in the Arms/Legs days, there are more exercises listed than should be done in one gym session (many are similar), and you should skip or delete many of them.
+
 Push/Pull routine is based on doing all upper body push exercises one day, all leg exercises a second day, and all upper body pull exercises a third day, with a rest day in between. This routine is harder but better for building muscle and gaining strength.  
 
 Arm/Leg routine is a little easier, and aimed at maintaining muscle and bone strength.  It is based on alternating muscles, with a push or pull exercise typically followed an exercise for  the opposing muscle (e.g. biceps followed by triceps).  Upper body one day, legs a second day and core a third day.
