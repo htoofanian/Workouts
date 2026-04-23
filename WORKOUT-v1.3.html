@@ -1,0 +1,1884 @@
+<html lang="en"><head>
+<meta charset="UTF-8">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="WORKOUT">
+<title>Workout Log</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&amp;family=DM+Sans:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet">
+<style>
+  /* COLORS — change any value here to restyle that color everywhere in the app.
+     --accent = red (title text, Clear button, day names)
+     --blue   = slate blue (Save, Done, progress bar, group borders, toggles)
+     --muted  = warm gray (secondary text, gym names, weights)
+     --border = light gray used for all card borders and dividers */
+  :root {
+    --bg:          #fcf4e3;
+    --surface: #ffffff;
+    --surface2: #e4dfd5;
+    --border: #d1d1d6;
+    --text: #1c1c1e;
+    --accent: #cc0000;
+    --blue: #3d6e99;
+    --red: #ef4444;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+  body { background: var(--bg); color: var(--text); font-family: 'DM Sans', sans-serif; font-size: 18px; min-height: 100vh; padding-bottom: 60px; }
+
+  /* Desktop view - constrain to iPhone width */
+  @media (min-width: 600px) {
+    body { background: #e4e0d8; display: flex; justify-content: center; padding-top: 20px; }
+    body::before { content: ''; position: fixed; top: 20px; left: 50%; transform: translateX(-50%); width: 390px; height: calc(100vh - 40px); background: var(--bg); border-radius: 0; box-shadow: 0 0 0 3px #2a2a2a, 0 20px 60px rgba(0,0,0,0.4); z-index: -1; }
+    #app-container { max-width: 390px; width: 100%; background: var(--bg); min-height: calc(100vh - 40px); border-radius: 0; overflow-x: hidden; overflow-y: auto; scrollbar-width: none; }
+#app-container::-webkit-scrollbar { display: none; }
+    header { border-radius: 0; }
+  }
+
+  /* HEADER BAR — the white sticky bar at the top with the title, dropdown and buttons.
+     padding: TOP RIGHT BOTTOM — increase the first number for more space above the title. */
+  header { background: var(--bg); border-bottom: 2px solid var(--border); padding: 24px 16px 8px; position: sticky; top: 0; z-index: 100; }
+  .header-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 6px; }
+  h1 { font-family: 'Bebas Neue', sans-serif; font-size: 24px; letter-spacing: 2px; color: var(--accent); line-height: 1; text-align: center; padding-top: 4px; }
+  .subtitle { font-size: 13px; font-weight: 700; color: var(--blue); letter-spacing: 1.5px; text-transform: uppercase; margin-top: 2px; text-align: center; }
+  .routine-dropdown { position: relative; margin-top: 4px; width: 100%; }
+  .routine-btn {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px; font-weight: 700; color: var(--text);
+    letter-spacing: 1.5px; text-transform: uppercase;
+    display: block; width: 100%; text-align: center;
+    background: var(--bg);
+    border: 1.5px solid var(--accent);
+    border-radius: 999px;
+    outline: none;
+    padding: 4px 12px; cursor: pointer;
+    transition: all 0.15s;
+  }
+  .routine-btn:active { transform: scale(0.97); }
+  .routine-options {
+    display: none;
+    position: absolute;
+    top: calc(100% + 4px);
+    left: 0; right: 0;
+    background: var(--bg);
+    border: 1.5px solid var(--accent);
+    border-radius: 10px;
+    overflow: hidden;
+    z-index: 200;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.12);
+  }
+  .routine-options.open { display: block; }
+  .routine-option {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px; font-weight: 700; color: var(--text);
+    letter-spacing: 1.5px; text-transform: uppercase;
+    text-align: center;
+    padding: 6px 12px;
+    cursor: pointer;
+    transition: background 0.1s;
+  }
+  .routine-option:not(:last-child) { border-bottom: 1px solid var(--border); }
+  .routine-option:active { background: var(--surface2); }
+  .routine-option.selected { font-weight: 700; }
+  /* BUTTONS — .btn-orange = Clear (red), .btn-blue = Save/Done (slate), .btn-gray = Edit/Cancel (white+border).
+     To change button text, find the button in the HTML section below and edit the label between > and < */
+  .header-btns { display: flex; gap: 8px; align-items: center; }
+  .btn { border: 1.5px solid transparent; border-radius: 999px; padding: 6px 12px; font-family: 'DM Sans', sans-serif; font-weight: 700; font-size: 12px; letter-spacing: 1px; text-transform: uppercase; cursor: pointer; transition: all 0.15s; white-space: nowrap; line-height: 1; display: inline-flex; align-items: center; justify-content: center; }
+  .btn:active { transform: scale(0.95); opacity: 0.85; }
+  .btn-orange { background: var(--accent); color: #fff; border: 1.5px solid var(--text); }
+  .btn-blue { background: var(--blue); color: #fff; border-color: var(--blue); }
+  .btn-gray { background: var(--bg); color: var(--text); border-color: var(--text); }
+  /* DAY BLOCKS — each day (Monday, Wednesday etc.) is wrapped in a day-block.
+     .day-name = the big red day title. .day-sub = smaller gray subtitle (e.g. PULL · Culver).
+     .day-progress = the 0/7 counter on the right. .progress-bar = thin blue line below. */
+  .day-block { margin: 12px 12px 6px; }
+  .day-header { display: flex; align-items: center; gap: 10px; padding: 10px 14px 0; line-height: 1; }
+  .day-name { font-family: 'Bebas Neue', sans-serif; font-size: 20px; letter-spacing: 2px; color: var(--accent); }
+  .day-sub { font-size: 16px; color: var(--blue); letter-spacing: 1px; text-transform: uppercase; font-weight: 700; }
+  .day-progress { margin-left: auto; font-size: 16px; color: var(--blue); font-weight: 700; }
+  .day-progress span { color: var(--blue); font-weight: 700; }
+  .progress-bar-wrap { height: 3px; background: var(--border); border-radius: 2px; overflow: hidden; margin: 8px 14px 8px; }
+  .progress-bar-fill { height: 100%; background: var(--blue); border-radius: 2px; transition: width 0.4s ease; }
+
+  /* EXERCISE LIST — the white rounded card containing exercises for a day.
+     .exercise-group = blue-bordered box wrapping grouped exercises.
+     .exercise-item = a single exercise row. .checkbox = the circle that turns orange when done.
+     .exercise-name = the exercise name. .exercise-weight = the weight/sets text on the right. */
+  .exercise-list { background: var(--surface); border-radius: 14px; overflow: hidden; border: 1.5px solid var(--border); padding-bottom: 8px; }
+  .exercise-group { border: 1.5px solid var(--blue); border-radius: 12px; margin: 8px 8px 0 8px; overflow: hidden; }
+  .exercise-group .exercise-item { border-bottom: 1px solid var(--border); }
+  .exercise-group .exercise-item:last-child { border-bottom: none; }
+  .exercise-group + .exercise-item { border-top: 1px solid var(--border); margin-top: 8px; }
+
+  /* Normal mode */
+  .exercise-item { display: flex; align-items: center; padding: 9px 14px; border-bottom: 1px solid var(--border); gap: 12px; user-select: none; }
+  .exercise-item:last-child { border-bottom: none; }
+  .checkbox-zone { display: flex; align-items: center; padding: 8px; margin: -8px; cursor: pointer; flex-shrink: 0; }
+  .checkbox-zone:active .checkbox { transform: scale(0.9); }
+  .checkbox { width: 16px; height: 16px; border-radius: 50%; border: 2px solid var(--border); display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: all 0.2s; background: transparent; }
+  .exercise-item.done .checkbox { background: #f78700; border-color: #f78700; }
+  .checkmark { display: none; width: 11px; height: 8px; }
+  .checkmark path { stroke: #fff; stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; fill: none; }
+  .exercise-item.done .checkmark { display: block; }
+  .exercise-name { flex: 1; font-size: 15px; font-weight: 500; line-height: 1.3; color: var(--text); }
+  .exercise-item.done .exercise-name { color: #c45e00; }
+  .exercise-weight { font-size: 15px; font-weight: 500; color: var(--text); }
+  .diff-zone { display: flex; align-items: center; gap: 10px; cursor: pointer; padding: 8px; margin: -8px; border-radius: 12px; flex-shrink: 0; }
+  .diff-zone:active { background: var(--surface2); }
+  .difficulty-btn { width: 24px; height: 24px; border-radius: 50%; border: none; font-size: 12px; display: flex; align-items: center; justify-content: center; cursor: pointer; flex-shrink: 0; background: transparent; transition: all 0.15s; padding: 0; outline: none; -webkit-appearance: none; color: #ddd; }
+  .difficulty-btn:active { transform: scale(0.9); }
+  
+  /* Difficulty Picker Grid Adjusted for Tighter Vertical Spacing */
+
+.difficulty-picker { position: fixed; background: #ffffff; border: 1px solid var(--border); border-radius: 16px; padding: 10px; display: grid; grid-template-columns: repeat(4, 44px); grid-template-rows: repeat(3, 44px); align-content: start; row-gap: 4px; column-gap: 10px; z-index: 999; box-shadow: 0 8px 24px rgba(0,0,0,0.25); height: fit-content; }
+  
+  .diff-option { width: 44px; height: 44px; border-radius: 12px; border: none; font-size: 30px; cursor: pointer; background: transparent; display: flex; align-items: center; justify-content: center; transition: all 0.1s; line-height: 1; }
+  .diff-option.checkmark { color: #22c55e; font-size: 18px; flex-direction: column; gap: 2px; font-variant-emoji: text; }
+  .diff-option.checkmark.multi { font-size: 14px; line-height: 1.1; font-variant-emoji: text; }
+  .diff-option:active { transform: scale(0.85); }
+
+  /* EDIT MODE ROWS — when Edit is active each exercise becomes an edit-row with:
+     a drag handle (≡) on the left to reorder, two text inputs for name and weight/sets,
+     a trash icon to delete, and a ▼ toggle to group with the next exercise.
+     .add-exercise-btn = the "+ Add exercise" button that appears below each day's list. */
+  /* Edit mode */
+  .edit-row { display: grid; grid-template-columns: auto 1fr auto; grid-template-rows: auto auto; padding: 4px 8px; border-bottom: 1.5px solid var(--border); gap: 2px; background: var(--surface); position: relative; align-items: center; }
+  .edit-row:last-child { border-bottom: none; }
+  
+  /* FIXED DRAG HANDLE FOR MOBILE: Bigger target, prevent text selection, strict left alignment */
+  .drag-handle { display: flex; flex-direction: column; justify-content: center; align-items: flex-start; gap: 3px; padding: 6px 14px 6px 12px; margin-left: -4px; cursor: grab; flex-shrink: 0; touch-action: none; -webkit-user-select: none; user-select: none; -webkit-touch-callout: none; }
+  .drag-handle span { display: block; width: 18px; height: 2.5px; background: var(--border); border-radius: 2px; }
+  
+  .edit-inputs { flex: 1; display: flex; flex-direction: column; gap: 6px; }
+  .edit-input { width: 100%; border: 1.5px solid var(--border); border-radius: 8px; padding: 4px 11px; font-family: 'DM Sans', sans-serif; font-size: 15px; font-weight: 500; color: var(--text); background: var(--bg); outline: none; }
+  .edit-input:focus { border-color: var(--blue); }
+  .edit-input.name-input { font-weight: 500; font-size: 15px; }
+  .edit-input.weight-input { color: var(--blue); font-size: 15px; }
+  .delete-btn { background: transparent; border: none; cursor: pointer; flex-shrink: 0; display: flex; align-items: center; justify-content: center; transition: all 0.15s; padding: 10px; margin-right: -8px; } border-radius: 50%; border: none; background: #fee2e2; color: var(--red); font-size: 16px; display: flex; align-items: center; justify-content: center; cursor: pointer; flex-shrink: 0; transition: all 0.15s; }
+  .delete-btn:active { transform: scale(0.9); }
+  .add-exercise-btn { display: flex; align-items: center; justify-content: center; gap: 6px; width: 100%; margin-top: 8px; padding: 10px 14px; background: var(--surface); border: 1.5px solid var(--border); border-radius: 14px; color: var(--blue); font-family: 'DM Sans', sans-serif; font-size: 15px; font-weight: 500; cursor: pointer; transition: all 0.15s; }
+  .add-exercise-btn.attached { margin-top: 6px; }
+  .add-exercise-btn:active { background: var(--surface2); }
+
+  /* SAVE POPUP & MODALS — the panels that slide up when you tap Save, Clear, or the trash icon.
+     To change button labels in the Save popup, find the HTML section marked SAVE POPUP below
+     and edit the text between > and < on each button line. Same for the Clear and Delete modals. */
+  /* Save popup */
+  .save-popup-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 400; display: flex; align-items: center; justify-content: center; opacity: 0; pointer-events: none; transition: opacity 0.2s; padding: 20px; }
+  .save-popup-overlay.visible { opacity: 1; pointer-events: all; }
+  .save-popup { background: var(--surface); border-radius: 20px; padding: 20px; width: 100%; max-width: 320px; transform: translateY(20px); transition: transform 0.2s; }
+  .save-popup-overlay.visible .save-popup { transform: translateY(0); }
+  .save-popup h3 { font-family: 'Bebas Neue', sans-serif; font-size: 20px; letter-spacing: 1px; color: var(--accent); margin-bottom: 8px; }
+  .save-popup-btns { display: flex; flex-direction: column; gap: 8px; }
+  .save-popup-btns button { width: 100%; padding: 10px; border-radius: 999px; border: none; font-family: 'DM Sans', sans-serif; font-size: 12px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; cursor: pointer; transition: all 0.15s; line-height: 1; }
+  .save-popup-btns button:active { transform: scale(0.97); }
+  .btn-save-local { background: var(--bg); color: var(--text); border: 1.5px solid var(--text) !important; }
+  .btn-save-download { background: var(--blue); color: #fff; }
+  .btn-save-cancel { background: var(--bg); color: var(--blue); font-size: 12px; border: 1.5px solid var(--text) !important; }
+
+  .header-edit-title { font-family: 'Bebas Neue', sans-serif; font-size: 24px; letter-spacing: 2px; color: var(--accent); background: transparent; border: 1.5px solid var(--border); border-radius: 6px; outline: none; width: 140px; padding: 2px 6px; line-height: 1; text-align: center; }
+  .header-edit-title:focus { border-color: var(--blue); }
+  .header-edit-sub { font-size: 13px; font-weight: 700; color: var(--blue); letter-spacing: 1.5px; text-transform: uppercase; background: #ffffff; border: 1.5px solid var(--border); border-radius: 999px; outline: none; width: 140px; padding: 4px 10px; margin-top: 2px; font-family: 'DM Sans', sans-serif; text-align: center; }
+  .header-edit-sub:focus { border-color: var(--blue); }
+  .day-edit-name { font-family: 'Bebas Neue', sans-serif; font-size: 20px; letter-spacing: 2px; color: var(--accent); background: transparent; border: 1.5px solid var(--border); border-radius: 6px; outline: none; padding: 1px 6px; width: auto; field-sizing: content; min-width: 80px; }
+  .day-edit-name:focus { border-color: var(--blue); }
+  .day-edit-sub { font-size: 16px; font-weight: 700; color: var(--blue); letter-spacing: 1px; text-transform: uppercase; background: transparent; border: 1.5px solid var(--border); border-radius: 6px; outline: none; padding: 1px 6px; font-family: 'DM Sans', sans-serif; width: auto; field-sizing: content; min-width: 100px; }
+  .day-edit-sub:focus { border-color: var(--blue); }
+  #routineLabel { display: block; width: 100%; text-align: center; }
+  .save-filename-row { margin-bottom: 14px; }
+  .save-filename-row label { font-size: 13px; color: var(--blue); font-weight: 600; display: block; margin-bottom: 4px; }
+  .save-filename-input { width: 100%; border: 1.5px solid var(--border); border-radius: 8px; padding: 8px 10px; font-family: 'DM Sans', sans-serif; font-size: 14px; color: var(--text); background: var(--bg); outline: none; }
+  .save-filename-input:focus { border-color: var(--blue); }
+
+  /* Modal */
+  .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 300; display: flex; align-items: center; justify-content: center; opacity: 0; pointer-events: none; transition: opacity 0.2s; padding: 20px; }
+  .modal-overlay.visible { opacity: 1; pointer-events: all; }
+  .modal { background: var(--surface); border-radius: 20px; padding: 16px; width: 100%; max-width: 240px; transform: translateY(20px); transition: transform 0.2s; }
+  .modal-overlay.visible .modal { transform: translateY(0); }
+  .modal-btns { display: flex; gap: 10px; justify-content: center; }
+  .modal-btns button { padding: 6px 12px; border-radius: 999px; border: none; font-family: 'DM Sans', sans-serif; font-size: 12px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; cursor: pointer; transition: all 0.15s; line-height: 1; }
+  .modal-btns button:active { transform: scale(0.97); }
+  .btn-cancel-modal { background: var(--bg); color: var(--text); border: 1.5px solid var(--text) !important; }
+  .btn-confirm-modal { background: var(--accent); color: #fff; }
+  .version-info { text-align: right; font-size: 11px; color: #aaa; padding-top: 2px; }
+  .edit-heading { display: none; text-align: center; font-family: 'DM Sans', sans-serif; font-size: 16px; font-weight: 700; color: var(--blue); letter-spacing: 1.5px; text-transform: uppercase; padding: 6px 0 2px; }
+  .edit-heading.visible { display: block; }
+  .edit-note { text-align: center; font-size: 12px; color: var(--text); padding: 2px 0 4px; }
+  .edit-row.grouped { background: #f0f4f8; }
+
+  /* CUSTOM TOGGLES (edit mode only) —
+     .day-toggle = the pill switch on each day header (blue = day visible, gray = hidden).
+     .group-check = the small square checkbox + ▼ label for grouping exercises together. */
+  /* Custom pill toggle — "show this day" */
+  .day-toggle { margin-left: auto; flex-shrink: 0; width: 36px; height: 20px; border-radius: 999px; border: 1.5px solid var(--border); background: var(--surface2); cursor: pointer; position: relative; transition: background 0.2s, border-color 0.2s; }
+  .day-toggle.on { background: var(--blue); border-color: var(--blue); }
+  .day-toggle::after { content: ''; position: absolute; top: 2px; left: 2px; width: 14px; height: 14px; border-radius: 50%; background: #fff; transition: transform 0.2s; box-shadow: 0 1px 3px rgba(0,0,0,0.2); }
+  .day-toggle.on::after { transform: translateX(16px); }
+
+  /* Custom group-with-next checkbox */
+  .group-check { display: flex; align-items: center; gap: 5px; cursor: pointer; padding: 2px 0; }
+  .group-check-box { width: 14px; height: 14px; border-radius: 3px; border: 1.5px solid var(--border); background: var(--surface); flex-shrink: 0; display: flex; align-items: center; justify-content: center; transition: all 0.15s; }
+  .group-check.on .group-check-box { background: var(--blue); border-color: var(--blue); }
+  .group-check-box svg { display: none; }
+  .group-check.on .group-check-box svg { display: block; }
+  .group-check-label { font-size: 10px; color: var(--text); font-family: 'DM Sans', sans-serif; user-select: none; }
+</style>
+</head>
+<body style="">
+
+<div id="app-container">
+<header>
+  <div class="header-top">
+    <div>
+      <h1 id="appTitle">Workout Log</h1>
+      <div class="routine-dropdown" id="routineDropdown" style="">
+        <button class="routine-btn" id="routineBtn" onclick="toggleRoutineDropdown(event)">PUSH/PULL</button>
+        <div class="routine-options" id="routineOptions">
+      <div class="routine-option selected" data-routine="pushpull" onclick="selectRoutine('pushpull')">PUSH/PULL</div>
+          <div class="routine-option" data-routine="armleg" onclick="selectRoutine('armleg')">ARM/LEGS</div>
+        </div>
+      </div>
+      <div class="subtitle" id="routineLabel" style="display: none;">PUSH/PULL</div>
+    </div>
+    <div class="header-btns">
+      <button class="btn btn-gray" id="editBtn" onclick="toggleEdit()">Edit</button>
+      <button class="btn btn-gray" id="cancelBtn" onclick="cancelEdit()" style="display: none;">Cancel</button>
+      <button class="btn btn-blue" id="saveBtn" onclick="showSave()" style="display: inline-flex;">Save</button>
+      <button class="btn btn-orange" id="resetBtn" onclick="showReset()" style="display: inline-flex;">Clear</button>
+    </div>
+  </div>
+  <div class="edit-heading" id="editHeading">EDIT ROUTINE</div>
+  <div class="edit-note" id="editNote" style="display: none;">▼ = Group with next exercise</div>
+  <div class="version-info" id="versionInfo">v1.1111 · Apr 22, 2026</div>
+</header>
+
+<div id="app"><div class="day-block"><div class="day-header">
+        <span class="day-name">Monday</span>
+        <span class="day-sub">PULL · Culver</span>
+        <span class="day-progress"><span>0</span>/8</span>
+      </div><div class="progress-bar-wrap"><div class="progress-bar-fill" style="width:0%"></div></div><div class="exercise-list"><div class="exercise-item">
+              <div class="checkbox-zone" onclick="toggleDone(0,0)">
+                <div class="checkbox"><svg class="checkmark" viewBox="0 0 10 7"><path d="M1 3.5L3.5 6L9 1"></path></svg></div>
+              </div>
+              <div class="exercise-name">Lateral Pull Down</div>
+              <div class="diff-zone" onclick="togglePicker('0_0',event)">
+                <div class="exercise-weight">70</div>
+                <div style="position:relative;display:inline-flex;">
+                  <button class="difficulty-btn" style="">⬤</button>
+                  
+                </div>
+              </div>
+            </div><div class="exercise-item">
+              <div class="checkbox-zone" onclick="toggleDone(0,1)">
+                <div class="checkbox"><svg class="checkmark" viewBox="0 0 10 7"><path d="M1 3.5L3.5 6L9 1"></path></svg></div>
+              </div>
+              <div class="exercise-name">Front Rotate Pulldown</div>
+              <div class="diff-zone" onclick="togglePicker('0_1',event)">
+                <div class="exercise-weight">35</div>
+                <div style="position:relative;display:inline-flex;">
+                  <button class="difficulty-btn" style="">⬤</button>
+                  
+                </div>
+              </div>
+            </div><div class="exercise-item">
+              <div class="checkbox-zone" onclick="toggleDone(0,2)">
+                <div class="checkbox"><svg class="checkmark" viewBox="0 0 10 7"><path d="M1 3.5L3.5 6L9 1"></path></svg></div>
+              </div>
+              <div class="exercise-name">Hammer Curl Dumbbell</div>
+              <div class="diff-zone" onclick="togglePicker('0_2',event)">
+                <div class="exercise-weight">12.5</div>
+                <div style="position:relative;display:inline-flex;">
+                  <button class="difficulty-btn" style="">⬤</button>
+                  
+                </div>
+              </div>
+            </div><div class="exercise-group"><div class="exercise-item">
+                  <div class="checkbox-zone" onclick="toggleDone(0,3)">
+                    <div class="checkbox"><svg class="checkmark" viewBox="0 0 10 7"><path d="M1 3.5L3.5 6L9 1"></path></svg></div>
+                  </div>
+                  <div class="exercise-name">Mid Row Cable</div>
+                  <div class="diff-zone" onclick="togglePicker('0_3',event)">
+                    <div class="exercise-weight">32.5 · 7th</div>
+                    <div style="position:relative;display:inline-flex;">
+                      <button class="difficulty-btn" style="">⬤</button>
+                      
+                    </div>
+                  </div>
+                </div><div class="exercise-item">
+                  <div class="checkbox-zone" onclick="toggleDone(0,4)">
+                    <div class="checkbox"><svg class="checkmark" viewBox="0 0 10 7"><path d="M1 3.5L3.5 6L9 1"></path></svg></div>
+                  </div>
+                  <div class="exercise-name">Mid Row Machine</div>
+                  <div class="diff-zone" onclick="togglePicker('0_4',event)">
+                    <div class="exercise-weight">50</div>
+                    <div style="position:relative;display:inline-flex;">
+                      <button class="difficulty-btn" style="">⬤</button>
+                      
+                    </div>
+                  </div>
+                </div></div><div class="exercise-group"><div class="exercise-item">
+                  <div class="checkbox-zone" onclick="toggleDone(0,5)">
+                    <div class="checkbox"><svg class="checkmark" viewBox="0 0 10 7"><path d="M1 3.5L3.5 6L9 1"></path></svg></div>
+                  </div>
+                  <div class="exercise-name">Biceps Curl Machine</div>
+                  <div class="diff-zone" onclick="togglePicker('0_5',event)">
+                    <div class="exercise-weight">20</div>
+                    <div style="position:relative;display:inline-flex;">
+                      <button class="difficulty-btn" style="">⬤</button>
+                      
+                    </div>
+                  </div>
+                </div><div class="exercise-item">
+                  <div class="checkbox-zone" onclick="toggleDone(0,6)">
+                    <div class="checkbox"><svg class="checkmark" viewBox="0 0 10 7"><path d="M1 3.5L3.5 6L9 1"></path></svg></div>
+                  </div>
+                  <div class="exercise-name">Biceps Curl Dumbbell</div>
+                  <div class="diff-zone" onclick="togglePicker('0_6',event)">
+                    <div class="exercise-weight">12.5</div>
+                    <div style="position:relative;display:inline-flex;">
+                      <button class="difficulty-btn" style="">⬤</button>
+                      
+                    </div>
+                  </div>
+                </div></div><div class="exercise-item">
+              <div class="checkbox-zone" onclick="toggleDone(0,7)">
+                <div class="checkbox"><svg class="checkmark" viewBox="0 0 10 7"><path d="M1 3.5L3.5 6L9 1"></path></svg></div>
+              </div>
+              <div class="exercise-name">Rope Climb (if free)</div>
+              <div class="diff-zone" onclick="togglePicker('0_7',event)">
+                <div class="exercise-weight">x50</div>
+                <div style="position:relative;display:inline-flex;">
+                  <button class="difficulty-btn" style="">⬤</button>
+                  
+                </div>
+              </div>
+            </div><div class="exercise-item">
+              <div class="checkbox-zone" onclick="toggleDone(0,8)">
+                <div class="checkbox"><svg class="checkmark" viewBox="0 0 10 7"><path d="M1 3.5L3.5 6L9 1"></path></svg></div>
+              </div>
+              <div class="exercise-name">Reverse Bench Crunch</div>
+              <div class="diff-zone" onclick="togglePicker('0_8',event)">
+                <div class="exercise-weight">BW 3x12</div>
+                <div style="position:relative;display:inline-flex;">
+                  <button class="difficulty-btn" style="">⬤</button>
+                  
+                </div>
+              </div>
+            </div><div class="exercise-item">
+              <div class="checkbox-zone" onclick="toggleDone(0,9)">
+                <div class="checkbox"><svg class="checkmark" viewBox="0 0 10 7"><path d="M1 3.5L3.5 6L9 1"></path></svg></div>
+              </div>
+              <div class="exercise-name">Ab Crunch</div>
+              <div class="diff-zone" onclick="togglePicker('0_9',event)">
+                <div class="exercise-weight">50</div>
+                <div style="position:relative;display:inline-flex;">
+                  <button class="difficulty-btn" style="">⬤</button>
+                  
+                </div>
+              </div>
+            </div></div></div><div class="day-block"><div class="day-header">
+        <span class="day-name">Wednesday</span>
+        <span class="day-sub">LEGS · Michelson</span>
+        <span class="day-progress"><span>0</span>/7</span>
+      </div><div class="progress-bar-wrap"><div class="progress-bar-fill" style="width:0%"></div></div><div class="exercise-list"><div class="exercise-item">
+              <div class="checkbox-zone" onclick="toggleDone(2,0)">
+                <div class="checkbox"><svg class="checkmark" viewBox="0 0 10 7"><path d="M1 3.5L3.5 6L9 1"></path></svg></div>
+              </div>
+              <div class="exercise-name">Leg Press</div>
+              <div class="diff-zone" onclick="togglePicker('2_0',event)">
+                <div class="exercise-weight">260</div>
+                <div style="position:relative;display:inline-flex;">
+                  <button class="difficulty-btn" style="">⬤</button>
+                  
+                </div>
+              </div>
+            </div><div class="exercise-item">
+              <div class="checkbox-zone" onclick="toggleDone(2,1)">
+                <div class="checkbox"><svg class="checkmark" viewBox="0 0 10 7"><path d="M1 3.5L3.5 6L9 1"></path></svg></div>
+              </div>
+              <div class="exercise-name">Leg Extension</div>
+              <div class="diff-zone" onclick="togglePicker('2_1',event)">
+                <div class="exercise-weight">50</div>
+                <div style="position:relative;display:inline-flex;">
+                  <button class="difficulty-btn" style="">⬤</button>
+                  
+                </div>
+              </div>
+            </div><div class="exercise-item">
+              <div class="checkbox-zone" onclick="toggleDone(2,2)">
+                <div class="checkbox"><svg class="checkmark" viewBox="0 0 10 7"><path d="M1 3.5L3.5 6L9 1"></path></svg></div>
+              </div>
+              <div class="exercise-name">Leg Curl</div>
+              <div class="diff-zone" onclick="togglePicker('2_2',event)">
+                <div class="exercise-weight">C65 · M70</div>
+                <div style="position:relative;display:inline-flex;">
+                  <button class="difficulty-btn" style="">⬤</button>
+                  
+                </div>
+              </div>
+            </div><div class="exercise-item">
+              <div class="checkbox-zone" onclick="toggleDone(2,3)">
+                <div class="checkbox"><svg class="checkmark" viewBox="0 0 10 7"><path d="M1 3.5L3.5 6L9 1"></path></svg></div>
+              </div>
+              <div class="exercise-name">Hip Abduction (OUT)</div>
+              <div class="diff-zone" onclick="togglePicker('2_3',event)">
+                <div class="exercise-weight">160</div>
+                <div style="position:relative;display:inline-flex;">
+                  <button class="difficulty-btn" style="">⬤</button>
+                  
+                </div>
+              </div>
+            </div><div class="exercise-item">
+              <div class="checkbox-zone" onclick="toggleDone(2,4)">
+                <div class="checkbox"><svg class="checkmark" viewBox="0 0 10 7"><path d="M1 3.5L3.5 6L9 1"></path></svg></div>
+              </div>
+              <div class="exercise-name">Hip Adduction (IN)</div>
+              <div class="diff-zone" onclick="togglePicker('2_4',event)">
+                <div class="exercise-weight">220</div>
+                <div style="position:relative;display:inline-flex;">
+                  <button class="difficulty-btn" style="">⬤</button>
+                  
+                </div>
+              </div>
+            </div><div class="exercise-item">
+              <div class="checkbox-zone" onclick="toggleDone(2,5)">
+                <div class="checkbox"><svg class="checkmark" viewBox="0 0 10 7"><path d="M1 3.5L3.5 6L9 1"></path></svg></div>
+              </div>
+              <div class="exercise-name">Seated Calves</div>
+              <div class="diff-zone" onclick="togglePicker('2_5',event)">
+                <div class="exercise-weight">45</div>
+                <div style="position:relative;display:inline-flex;">
+                  <button class="difficulty-btn" style="">⬤</button>
+                  
+                </div>
+              </div>
+            </div><div class="exercise-item">
+              <div class="checkbox-zone" onclick="toggleDone(2,6)">
+                <div class="checkbox"><svg class="checkmark" viewBox="0 0 10 7"><path d="M1 3.5L3.5 6L9 1"></path></svg></div>
+              </div>
+              <div class="exercise-name">Ab Crunch</div>
+              <div class="diff-zone" onclick="togglePicker('2_6',event)">
+                <div class="exercise-weight">3x15 · 40</div>
+                <div style="position:relative;display:inline-flex;">
+                  <button class="difficulty-btn" style="">⬤</button>
+                  
+                </div>
+              </div>
+            </div></div></div><div class="day-block"><div class="day-header">
+        <span class="day-name">Friday</span>
+        <span class="day-sub">PUSH · Culver</span>
+        <span class="day-progress"><span>0</span>/5</span>
+      </div><div class="progress-bar-wrap"><div class="progress-bar-fill" style="width:0%"></div></div><div class="exercise-list"><div class="exercise-group"><div class="exercise-item">
+                  <div class="checkbox-zone" onclick="toggleDone(4,0)">
+                    <div class="checkbox"><svg class="checkmark" viewBox="0 0 10 7"><path d="M1 3.5L3.5 6L9 1"></path></svg></div>
+                  </div>
+                  <div class="exercise-name">Chest Press Straight</div>
+                  <div class="diff-zone" onclick="togglePicker('4_0',event)">
+                    <div class="exercise-weight">60</div>
+                    <div style="position:relative;display:inline-flex;">
+                      <button class="difficulty-btn" style="">⬤</button>
+                      
+                    </div>
+                  </div>
+                </div><div class="exercise-item">
+                  <div class="checkbox-zone" onclick="toggleDone(4,1)">
+                    <div class="checkbox"><svg class="checkmark" viewBox="0 0 10 7"><path d="M1 3.5L3.5 6L9 1"></path></svg></div>
+                  </div>
+                  <div class="exercise-name">Chest Press Up</div>
+                  <div class="diff-zone" onclick="togglePicker('4_1',event)">
+                    <div class="exercise-weight">50</div>
+                    <div style="position:relative;display:inline-flex;">
+                      <button class="difficulty-btn" style="">⬤</button>
+                      
+                    </div>
+                  </div>
+                </div></div><div class="exercise-group"><div class="exercise-item">
+                  <div class="checkbox-zone" onclick="toggleDone(4,2)">
+                    <div class="checkbox"><svg class="checkmark" viewBox="0 0 10 7"><path d="M1 3.5L3.5 6L9 1"></path></svg></div>
+                  </div>
+                  <div class="exercise-name">Shoulder Press Up</div>
+                  <div class="diff-zone" onclick="togglePicker('4_2',event)">
+                    <div class="exercise-weight">30</div>
+                    <div style="position:relative;display:inline-flex;">
+                      <button class="difficulty-btn" style="">⬤</button>
+                      
+                    </div>
+                  </div>
+                </div><div class="exercise-item">
+                  <div class="checkbox-zone" onclick="toggleDone(4,3)">
+                    <div class="checkbox"><svg class="checkmark" viewBox="0 0 10 7"><path d="M1 3.5L3.5 6L9 1"></path></svg></div>
+                  </div>
+                  <div class="exercise-name">Shoulder Laterals</div>
+                  <div class="diff-zone" onclick="togglePicker('4_3',event)">
+                    <div class="exercise-weight">3x10 · 20</div>
+                    <div style="position:relative;display:inline-flex;">
+                      <button class="difficulty-btn" style="">⬤</button>
+                      
+                    </div>
+                  </div>
+                </div></div><div class="exercise-group"><div class="exercise-item">
+                  <div class="checkbox-zone" onclick="toggleDone(4,4)">
+                    <div class="checkbox"><svg class="checkmark" viewBox="0 0 10 7"><path d="M1 3.5L3.5 6L9 1"></path></svg></div>
+                  </div>
+                  <div class="exercise-name">Triceps Dips / Press</div>
+                  <div class="diff-zone" onclick="togglePicker('4_4',event)">
+                    <div class="exercise-weight">70</div>
+                    <div style="position:relative;display:inline-flex;">
+                      <button class="difficulty-btn" style="">⬤</button>
+                      
+                    </div>
+                  </div>
+                </div><div class="exercise-item">
+                  <div class="checkbox-zone" onclick="toggleDone(4,5)">
+                    <div class="checkbox"><svg class="checkmark" viewBox="0 0 10 7"><path d="M1 3.5L3.5 6L9 1"></path></svg></div>
+                  </div>
+                  <div class="exercise-name">Triceps Machine</div>
+                  <div class="diff-zone" onclick="togglePicker('4_5',event)">
+                    <div class="exercise-weight">45</div>
+                    <div style="position:relative;display:inline-flex;">
+                      <button class="difficulty-btn" style="">⬤</button>
+                      
+                    </div>
+                  </div>
+                </div><div class="exercise-item">
+                  <div class="checkbox-zone" onclick="toggleDone(4,6)">
+                    <div class="checkbox"><svg class="checkmark" viewBox="0 0 10 7"><path d="M1 3.5L3.5 6L9 1"></path></svg></div>
+                  </div>
+                  <div class="exercise-name">Triceps Rope</div>
+                  <div class="diff-zone" onclick="togglePicker('4_6',event)">
+                    <div class="exercise-weight">30</div>
+                    <div style="position:relative;display:inline-flex;">
+                      <button class="difficulty-btn" style="">⬤</button>
+                      
+                    </div>
+                  </div>
+                </div></div><div class="exercise-item">
+              <div class="checkbox-zone" onclick="toggleDone(4,7)">
+                <div class="checkbox"><svg class="checkmark" viewBox="0 0 10 7"><path d="M1 3.5L3.5 6L9 1"></path></svg></div>
+              </div>
+              <div class="exercise-name">Chest Fly Close</div>
+              <div class="diff-zone" onclick="togglePicker('4_7',event)">
+                <div class="exercise-weight">60</div>
+                <div style="position:relative;display:inline-flex;">
+                  <button class="difficulty-btn" style="">⬤</button>
+                  
+                </div>
+              </div>
+            </div><div class="exercise-item">
+              <div class="checkbox-zone" onclick="toggleDone(4,8)">
+                <div class="checkbox"><svg class="checkmark" viewBox="0 0 10 7"><path d="M1 3.5L3.5 6L9 1"></path></svg></div>
+              </div>
+              <div class="exercise-name">Ab Crunch</div>
+              <div class="diff-zone" onclick="togglePicker('4_8',event)">
+                <div class="exercise-weight">3x15 · 40</div>
+                <div style="position:relative;display:inline-flex;">
+                  <button class="difficulty-btn" style="">⬤</button>
+                  
+                </div>
+              </div>
+            </div></div></div><div class="day-block"><div class="day-header">
+        <span class="day-name">Other</span>
+        <span class="day-sub">EXERCISES</span>
+        <span class="day-progress"><span>0</span>/7</span>
+      </div><div class="progress-bar-wrap"><div class="progress-bar-fill" style="width:0%"></div></div><div class="exercise-list"><div class="exercise-item">
+              <div class="checkbox-zone" onclick="toggleDone(7,0)">
+                <div class="checkbox"><svg class="checkmark" viewBox="0 0 10 7"><path d="M1 3.5L3.5 6L9 1"></path></svg></div>
+              </div>
+              <div class="exercise-name">Cycling</div>
+              <div class="diff-zone" onclick="togglePicker('7_0',event)">
+                <div class="exercise-weight">1 hour</div>
+                <div style="position:relative;display:inline-flex;">
+                  <button class="difficulty-btn" style="">⬤</button>
+                  
+                </div>
+              </div>
+            </div><div class="exercise-item">
+              <div class="checkbox-zone" onclick="toggleDone(7,1)">
+                <div class="checkbox"><svg class="checkmark" viewBox="0 0 10 7"><path d="M1 3.5L3.5 6L9 1"></path></svg></div>
+              </div>
+              <div class="exercise-name">Elliptical + Rowing</div>
+              <div class="diff-zone" onclick="togglePicker('7_1',event)">
+                <div class="exercise-weight">30 min</div>
+                <div style="position:relative;display:inline-flex;">
+                  <button class="difficulty-btn" style="">⬤</button>
+                  
+                </div>
+              </div>
+            </div><div class="exercise-item">
+              <div class="checkbox-zone" onclick="toggleDone(7,2)">
+                <div class="checkbox"><svg class="checkmark" viewBox="0 0 10 7"><path d="M1 3.5L3.5 6L9 1"></path></svg></div>
+              </div>
+              <div class="exercise-name">Standing Stretch</div>
+              <div class="diff-zone" onclick="togglePicker('7_2',event)">
+                <div class="exercise-weight">20 min</div>
+                <div style="position:relative;display:inline-flex;">
+                  <button class="difficulty-btn" style="">⬤</button>
+                  
+                </div>
+              </div>
+            </div><div class="exercise-item">
+              <div class="checkbox-zone" onclick="toggleDone(7,3)">
+                <div class="checkbox"><svg class="checkmark" viewBox="0 0 10 7"><path d="M1 3.5L3.5 6L9 1"></path></svg></div>
+              </div>
+              <div class="exercise-name">Floor Stretch</div>
+              <div class="diff-zone" onclick="togglePicker('7_3',event)">
+                <div class="exercise-weight">20 min</div>
+                <div style="position:relative;display:inline-flex;">
+                  <button class="difficulty-btn" style="">⬤</button>
+                  
+                </div>
+              </div>
+            </div><div class="exercise-item">
+              <div class="checkbox-zone" onclick="toggleDone(7,4)">
+                <div class="checkbox"><svg class="checkmark" viewBox="0 0 10 7"><path d="M1 3.5L3.5 6L9 1"></path></svg></div>
+              </div>
+              <div class="exercise-name">Core Workout</div>
+              <div class="diff-zone" onclick="togglePicker('7_4',event)">
+                <div class="exercise-weight">5 min</div>
+                <div style="position:relative;display:inline-flex;">
+                  <button class="difficulty-btn" style="">⬤</button>
+                  
+                </div>
+              </div>
+            </div><div class="exercise-item">
+              <div class="checkbox-zone" onclick="toggleDone(7,5)">
+                <div class="checkbox"><svg class="checkmark" viewBox="0 0 10 7"><path d="M1 3.5L3.5 6L9 1"></path></svg></div>
+              </div>
+              <div class="exercise-name">Planks + Ab Wheel </div>
+              <div class="diff-zone" onclick="togglePicker('7_5',event)">
+                <div class="exercise-weight">5  min</div>
+                <div style="position:relative;display:inline-flex;">
+                  <button class="difficulty-btn" style="">⬤</button>
+                  
+                </div>
+              </div>
+            </div><div class="exercise-item">
+              <div class="checkbox-zone" onclick="toggleDone(7,6)">
+                <div class="checkbox"><svg class="checkmark" viewBox="0 0 10 7"><path d="M1 3.5L3.5 6L9 1"></path></svg></div>
+              </div>
+              <div class="exercise-name">Balance Exercise</div>
+              <div class="diff-zone" onclick="togglePicker('7_6',event)">
+                <div class="exercise-weight">3 min</div>
+                <div style="position:relative;display:inline-flex;">
+                  <button class="difficulty-btn" style="">⬤</button>
+                  
+                </div>
+              </div>
+            </div></div></div></div>
+
+<div class="save-popup-overlay" id="savePopup">
+  <div class="save-popup">
+    <div id="savePanel1" style="display: none;">
+      <h3 style="text-align:center;">Save</h3>
+      <div class="save-popup-btns">
+        <button class="btn-save-local" onclick="confirmSaveLocal()">Temp Save to Browser ✓</button>
+        <button class="btn-save-download" onclick="showDownloadPanel()">Save to Downloads</button>
+        <button class="btn-save-cancel" onclick="hideSave()">Cancel</button>
+      </div>
+    </div>
+    <div id="savePanel2" style="">
+      <h3>Save to Downloads</h3>
+      <div class="save-filename-row">
+        <label>Filename</label>
+        <input class="save-filename-input" id="downloadFilename" type="text" value="WORKOUT-vxx.html">
+      </div>
+      <div class="save-popup-btns">
+        <button class="btn-save-download" onclick="confirmSaveDownload()">Download</button>
+        <button class="btn-save-cancel" onclick="showMainPanel()">← Back</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="resetModal">
+  <div class="modal">
+    <h3 style="font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:1px;color:var(--accent);margin-bottom:16px;text-align:center;">Clear</h3>
+    <div class="modal-btns">
+      <button class="btn-cancel-modal" onclick="hideReset()">Cancel</button>
+             <button class="btn-confirm-modal" onclick="confirmReset()">Clear All</button>    
+</div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="deleteModal">
+  <div class="modal">
+    <div style="text-align:center;margin-bottom:16px;font-size:15px;color:var(--text);">Delete this exercise?</div>
+    <div class="modal-btns">
+      <button class="btn-confirm-modal" onclick="confirmDelete()">Delete</button>
+      <button class="btn-cancel-modal" onclick="hideDeleteConfirm()">Cancel</button>
+    </div>
+  </div>
+</div>
+
+</div>
+
+<script>
+// EXERCISE DATA — the two routines below define all days and exercises.
+// Each day has: day (name), type (subtitle), gym (or null), hidden (true = rest day), exercises (list).
+// Each exercise has: name, detail (weight/sets), and optionally groupWithNext:true to link it to the next.
+// Note: edits made in the app override this data. Changes here only apply on a fresh install or key reset.
+const DEFAULT_DAYS_PUSHPULL = [
+  {
+    "day": "Monday",
+    "type": "PULL",
+    "gym": "Culver",
+    "exercises": [
+      {
+        "name": "Lateral Pull Down",
+        "detail": "70",
+        "groupWithNext": false
+      },
+      {
+        "name": "Front Rotate Pulldown",
+        "detail": "35"
+      },
+      {
+        "name": "Hammer Curl Dumbbell",
+        "detail": "12.5"
+      },
+      {
+        "name": "Mid Row Cable",
+        "detail": "32.5 · 7th",
+        "groupWithNext": true,
+        "group": "group_1"
+      },
+      {
+        "name": "Mid Row Machine",
+        "detail": "50",
+        "group": "group_1"
+      },
+      {
+        "name": "Biceps Curl Machine",
+        "detail": "20",
+        "groupWithNext": true,
+        "group": "group_2"
+      },
+      {
+        "name": "Biceps Curl Dumbbell",
+        "detail": "12.5",
+        "group": "group_2"
+      },
+      {
+        "name": "Rope Climb (if free)",
+        "detail": "x50"
+      },
+      {
+        "name": "Reverse Bench Crunch",
+        "detail": "BW 3x12"
+      },
+      {
+        "name": "Ab Crunch",
+        "detail": "50"
+      }
+    ]
+  },
+  {
+    "day": "Tuesday",
+    "type": "REST",
+    "gym": null,
+    "hidden": true,
+    "exercises": []
+  },
+  {
+    "day": "Wednesday",
+    "type": "LEGS",
+    "gym": "Michelson",
+    "exercises": [
+      {
+        "name": "Leg Press",
+        "detail": "260"
+      },
+      {
+        "name": "Leg Extension",
+        "detail": "50"
+      },
+      {
+        "name": "Leg Curl",
+        "detail": "C65 · M70"
+      },
+      {
+        "name": "Hip Abduction (OUT)",
+        "detail": "160"
+      },
+      {
+        "name": "Hip Adduction (IN)",
+        "detail": "220"
+      },
+      {
+        "name": "Seated Calves",
+        "detail": "45"
+      },
+      {
+        "name": "Ab Crunch",
+        "detail": "3x15 · 40"
+      }
+    ],
+    "hidden": false
+  },
+  {
+    "day": "Thursday",
+    "type": "REST",
+    "gym": null,
+    "hidden": true,
+    "exercises": []
+  },
+  {
+    "day": "Friday",
+    "type": "PUSH",
+    "gym": "Culver",
+    "exercises": [
+      {
+        "name": "Chest Press Straight",
+        "detail": "60",
+        "groupWithNext": true,
+        "group": "group_1"
+      },
+      {
+        "name": "Chest Press Up",
+        "detail": "50",
+        "group": "group_1"
+      },
+      {
+        "name": "Shoulder Press Up",
+        "detail": "30",
+        "groupWithNext": true,
+        "group": "group_2"
+      },
+      {
+        "name": "Shoulder Laterals",
+        "detail": "3x10 · 20",
+        "group": "group_2"
+      },
+      {
+        "name": "Triceps Dips / Press",
+        "detail": "70",
+        "groupWithNext": true,
+        "group": "group_3"
+      },
+      {
+        "name": "Triceps Machine",
+        "detail": "45",
+        "groupWithNext": true,
+        "group": "group_3"
+      },
+      {
+        "name": "Triceps Rope",
+        "detail": "30",
+        "group": "group_3"
+      },
+      {
+        "name": "Chest Fly Close",
+        "detail": "60"
+      },
+      {
+        "name": "Ab Crunch",
+        "detail": "3x15 · 40"
+      }
+    ]
+  },
+  {
+    "day": "Saturday",
+    "type": "REST",
+    "gym": null,
+    "hidden": true,
+    "exercises": []
+  },
+  {
+    "day": "Sunday",
+    "type": "REST",
+    "gym": null,
+    "hidden": true,
+    "exercises": []
+  },
+  {
+    "day": "Other",
+    "type": "EXERCISES",
+    "gym": null,
+    "exercises": [
+      {
+        "name": "Cycling",
+        "detail": "1 hour"
+      },
+      {
+        "name": "Elliptical + Rowing",
+        "detail": "30 min"
+      },
+      {
+        "name": "Standing Stretch",
+        "detail": "20 min"
+      },
+      {
+        "name": "Floor Stretch",
+        "detail": "20 min"
+      },
+      {
+        "name": "Core Workout",
+        "detail": "5 min"
+      },
+      {
+        "name": "Planks + Ab Wheel ",
+        "detail": "5  min"
+      },
+      {
+        "name": "Balance Exercise",
+        "detail": "3 min"
+      }
+    ]
+  }
+];
+
+const DEFAULT_DAYS_ARMLEG = [
+  {
+    "day": "Monday",
+    "type": "ARMS",
+    "gym": "Culver",
+    "exercises": [
+      {
+        "name": "Chest Fly Close",
+        "detail": "60",
+        "groupWithNext": false
+      },
+      {
+        "name": "Chest Press",
+        "detail": "C65 · M60",
+        "groupWithNext": true,
+        "group": "group_1"
+      },
+      {
+        "name": "Chest Press Up",
+        "detail": "50",
+        "group": "group_1"
+      },
+      {
+        "name": "Lateral Pull Down",
+        "detail": "70",
+        "groupWithNext": true,
+        "group": "group_2"
+      },
+      {
+        "name": "Front Rotation Down",
+        "detail": "40",
+        "group": "group_2"
+      },
+      {
+        "name": "Shoulder Press",
+        "detail": "C30 · M25",
+        "groupWithNext": true,
+        "group": "group_3"
+      },
+      {
+        "name": "Shoulder Laterals",
+        "detail": "25",
+        "group": "group_3"
+      },
+      {
+        "name": "Row Cable",
+        "detail": "35 · 7th",
+        "groupWithNext": true,
+        "group": "group_4"
+      },
+      {
+        "name": "Row Machine",
+        "detail": "C60 · M50",
+        "group": "group_4"
+      },
+      {
+        "name": "Triceps Rope",
+        "detail": "35",
+        "groupWithNext": true,
+        "group": "group_5"
+      },
+      {
+        "name": "Triceps Machine",
+        "detail": "40",
+        "groupWithNext": true,
+        "group": "group_5"
+      },
+      {
+        "name": "Triceps Assisted Dip",
+        "detail": "70",
+        "group": "group_5"
+      },
+      {
+        "name": "Bicep Curl",
+        "detail": "20",
+        "groupWithNext": true,
+        "group": "group_6"
+      },
+      {
+        "name": "Bicep Curl Dumbell",
+        "detail": "12.5",
+        "groupWithNext": true,
+        "group": "group_6"
+      },
+      {
+        "name": "Hammer Curl Dumbbell",
+        "detail": "12.5",
+        "group": "group_6"
+      }
+    ]
+  },
+  {
+    "day": "Tuesday",
+    "type": "REST",
+    "gym": null,
+    "hidden": true,
+    "exercises": []
+  },
+  {
+    "day": "Wednesday",
+    "type": "LEGS",
+    "gym": "Michelson",
+    "exercises": [
+      {
+        "name": "Leg Extensions",
+        "detail": "50"
+      },
+      {
+        "name": "Leg Curls",
+        "detail": "C65 · M70"
+      },
+      {
+        "name": "Leg Press",
+        "detail": "260"
+      },
+      {
+        "name": "Hip Abduction (OUT)",
+        "detail": "160"
+      },
+      {
+        "name": "Hip Adduction (IN)",
+        "detail": "220"
+      },
+      {
+        "name": "Seated Calves",
+        "detail": "45"
+      },
+      {
+        "name": "Ab Crunch",
+        "detail": "3x15 · 40"
+      }
+    ]
+  },
+  {
+    "day": "Thursday",
+    "type": "REST",
+    "gym": null,
+    "hidden": true,
+    "exercises": []
+  },
+  {
+    "day": "Friday",
+    "type": "CORE",
+    "gym": "Culver",
+    "exercises": [
+      {
+        "name": "Ab Crunch",
+        "detail": "3x15 · 40"
+      },
+      {
+        "name": "Reverse Bench Crunch",
+        "detail": "3x8"
+      },
+      {
+        "name": "Torso Twists",
+        "detail": "65",
+        "groupWithNext": true,
+        "group": "group_1"
+      },
+      {
+        "name": "Side Bends",
+        "detail": "22 · 5th",
+        "group": "group_1"
+      },
+      {
+        "name": "Rear Deltoid Fly",
+        "detail": "50"
+      },
+      {
+        "name": "Cable Shrugs",
+        "detail": ""
+      },
+      {
+        "name": "Rope Climb",
+        "detail": "50",
+        "groupWithNext": true,
+        "group": "group_2"
+      },
+      {
+        "name": "Ski ERG",
+        "detail": "10",
+        "group": "group_2"
+      }
+    ]
+  },
+  {
+    "day": "Saturday",
+    "type": "REST",
+    "gym": null,
+    "hidden": true,
+    "exercises": []
+  },
+  {
+    "day": "Sunday",
+    "type": "REST",
+    "gym": null,
+    "hidden": true,
+    "exercises": []
+  },
+  {
+    "day": "Other",
+    "type": "EXERCISES",
+    "gym": null,
+    "exercises": [
+      {
+        "name": "Cycling",
+        "detail": "1 hour"
+      },
+      {
+        "name": "Elliptical + Rowing",
+        "detail": "30 min"
+      },
+      {
+        "name": "Standing Stretch",
+        "detail": "20 min"
+      },
+      {
+        "name": "Floor Stretch",
+        "detail": "20 min"
+      },
+      {
+        "name": "Core Workout",
+        "detail": "5 min"
+      },
+      {
+        "name": "Planks + Ab Wheel",
+        "detail": "5 min"
+      },
+      {
+        "name": "Balance Exercise",
+        "detail": "3 min"
+      }
+    ]
+  }
+];
+
+
+const DIFFICULTIES = ["🔴","🟠","🟡","🟢","✔","✔✔","✔✔✔","","⬤","🔺","🔻",""];
+// APP METADATA — title, version number, save date, and the two routine dropdown labels.
+// All of these are editable in the app via Edit mode and are saved with "Save to Downloads".
+const DEFAULT_META = {"title":"Workout Log","subtitle":"Push / Pull","version":"1.1111","savedDate":"Apr 22, 2026","label_pushpull":"PUSH/PULL","label_armleg":"ARM/LEGS"};
+
+// STORAGE KEYS — labels used to save data in the browser. Each routine has its own keys
+// so switching routines never overwrites the other's data. To force a full reset to defaults
+// (e.g. after major changes), change the prefix "wl6_" to "wl7_" — but this will wipe all saved progress.
+// ── Storage (routine-aware) ───────────────────────────────────────────
+// The app holds two routines; `routine` tracks which one is active.
+// `days` and `state` always point to the active routine's data; switching
+// routines re-binds these pointers. Each routine's data is persisted
+// under its own localStorage key.
+const ROUTINES = ['pushpull', 'armleg'];
+const DEFAULT_DAYS_BY_ROUTINE = {
+  pushpull: DEFAULT_DAYS_PUSHPULL,
+  armleg:   DEFAULT_DAYS_ARMLEG
+};
+const KEY = {
+  routine:       'wl6_routine',
+  days_pushpull: 'wl6_days_pushpull',
+  days_armleg:   'wl6_days_armleg',
+  state_pushpull:'wl6_state_pushpull',
+  state_armleg:  'wl6_state_armleg',
+  meta:          'wl6_meta'
+};
+function loadRoutine() {
+  try { const r = localStorage.getItem(KEY.routine); return (r === 'armleg') ? 'armleg' : 'pushpull'; }
+  catch { return 'pushpull'; }
+}
+function saveRoutine() { try { localStorage.setItem(KEY.routine, routine); } catch(e) {} }
+function daysKey(r)  { return r === 'armleg' ? KEY.days_armleg  : KEY.days_pushpull; }
+function stateKey(r) { return r === 'armleg' ? KEY.state_armleg : KEY.state_pushpull; }
+
+// Per-routine loaders
+function loadDaysFor(r) {
+  try { const s = localStorage.getItem(daysKey(r)); return s ? JSON.parse(s) : JSON.parse(JSON.stringify(DEFAULT_DAYS_BY_ROUTINE[r])); }
+  catch { return JSON.parse(JSON.stringify(DEFAULT_DAYS_BY_ROUTINE[r])); }
+}
+function loadStateFor(r) {
+  try { const s = localStorage.getItem(stateKey(r)); return s ? JSON.parse(s) : {}; }
+  catch { return {}; }
+}
+
+// daysMap/stateMap hold both routines' data in memory; `days` and `state`
+// are live pointers into these maps for the currently active routine.
+const daysMap  = { pushpull: loadDaysFor('pushpull'),  armleg: loadDaysFor('armleg') };
+const stateMap = { pushpull: loadStateFor('pushpull'), armleg: loadStateFor('armleg') };
+
+// Current-routine accessors — save/load wrappers use the active routine's key.
+function saveDays()  { try { localStorage.setItem(daysKey(routine),  JSON.stringify(days));  } catch(e) {} }
+function saveState() { try { localStorage.setItem(stateKey(routine), JSON.stringify(state)); } catch(e) {} }
+// loadDays/loadState kept for compatibility (reload active-routine into pointer)
+function loadDays()  { return loadDaysFor(routine); }
+function loadState() { return loadStateFor(routine); }
+
+function saveMeta() { try { localStorage.setItem(KEY.meta, JSON.stringify(meta)); } catch(e) {} }
+function loadMeta() {
+  try {
+    const s = localStorage.getItem(KEY.meta);
+    if (s) {
+      const m = JSON.parse(s);
+      // Force visual update of version from file regardless of saved state
+      m.version = DEFAULT_META.version;
+      m.savedDate = DEFAULT_META.savedDate;
+      return m;
+    }
+    return JSON.parse(JSON.stringify(DEFAULT_META));
+  } catch { return JSON.parse(JSON.stringify(DEFAULT_META)); }
+}
+
+let routine = loadRoutine();
+let days    = daysMap[routine];
+let state   = stateMap[routine];
+let meta    = loadMeta();
+let openPicker = null;
+let pendingDelete = null;
+let editMode = false;
+
+function toggleRoutineDropdown(e) {
+  e.stopPropagation();
+  document.getElementById('routineOptions').classList.toggle('open');
+}
+function selectRoutine(val) {
+  document.getElementById('routineOptions').classList.remove('open');
+  switchRoutine(val);
+}
+
+// Called when the user picks a different routine from the dropdown
+function switchRoutine(newRoutine) {
+  if (newRoutine !== 'pushpull' && newRoutine !== 'armleg') return;
+  if (newRoutine === routine) return;
+  // Exit edit mode if active, discarding unsaved edits in current routine
+  if (editMode) {
+    if (typeof cancelEdit === 'function' && editSnapshot) cancelEdit();
+    else editMode = false;
+  }
+  // Rebind pointers; daysMap/stateMap already hold both routines.
+  routine = newRoutine;
+  days  = daysMap[routine];
+  state = stateMap[routine];
+  saveRoutine();
+  renderHeader();
+  render();
+}
+
+
+function renderHeader() {
+  const titleEl = document.getElementById('appTitle');
+  const dropdown = document.getElementById('routineDropdown');
+  const lbl = document.getElementById('routineLabel');
+  if (editMode) {
+    titleEl.innerHTML = `<input class="header-edit-title" value="${meta.title.replace(/"/g,'&quot;')}" onchange="meta.title=this.value;saveMeta();">`;
+  } else {
+    titleEl.textContent = meta.title;
+  }
+  // Ensure labels exist in meta
+  if (!meta.label_pushpull) meta.label_pushpull = 'PUSH/PULL';
+  if (!meta.label_armleg)   meta.label_armleg   = 'ARM/LEGS';
+  const labelKey = routine === 'armleg' ? 'label_armleg' : 'label_pushpull';
+  const labelText = meta[labelKey];
+  if (dropdown) dropdown.style.display = editMode ? 'none' : '';
+  if (lbl) {
+    if (editMode) {
+      lbl.style.display = '';
+      lbl.innerHTML = `<input class="header-edit-sub" value="${labelText.replace(/"/g,'&quot;')}" onchange="meta['${labelKey}']=this.value;saveMeta();updateDropdownLabels();" style="text-align:center;">`;
+    } else {
+      lbl.textContent = labelText;
+      lbl.style.display = 'none';
+    }
+  }
+  // Sync custom dropdown button and options
+  updateDropdownLabels();
+  const v = meta.version || 18;
+  const d = meta.savedDate || new Date().toLocaleDateString('en-US', {month:'short', day:'numeric', year:'numeric'});
+  document.getElementById('versionInfo').textContent = 'v' + v + ' · ' + d;
+  document.getElementById('editHeading').className = editMode ? 'edit-heading visible' : 'edit-heading';
+  document.getElementById('editNote').style.display = editMode ? 'block' : 'none';
+}
+
+function updateDropdownLabels() {
+  if (!meta.label_pushpull) meta.label_pushpull = 'PUSH/PULL';
+  if (!meta.label_armleg)   meta.label_armleg   = 'ARM/LEGS';
+  const btn = document.getElementById('routineBtn');
+  const labelText = routine === 'armleg' ? meta.label_armleg : meta.label_pushpull;
+  if (btn) btn.textContent = labelText;
+  document.querySelectorAll('.routine-option').forEach(opt => {
+    const r = opt.dataset.routine;
+    opt.textContent = r === 'armleg' ? meta.label_armleg : meta.label_pushpull;
+    opt.classList.toggle('selected', r === routine);
+  });
+}
+
+function key(d,e){return `${d}_${e}`;}
+function getEx(d,e){return state[key(d,e)]||{done:false,diff:""};}
+
+function toggleDone(d,e){
+  state[key(d,e)]={...getEx(d,e),done:!getEx(d,e).done};
+  saveState(); render();
+}
+function setDiff(d,e,diff){
+  state[key(d,e)]={...getEx(d,e),diff};
+  openPicker=null; saveState(); render();
+}
+function displayDiff(d){ return d.includes('✔') ? d.replace(/✔/g, '✔︎') : d; }
+let pickerPos = { top: null, bottom: null, right: 8 };
+
+function togglePicker(id, event) {
+  event.stopPropagation();
+  if (openPicker === id) { openPicker = null; render(); return; }
+
+  const btn = event.currentTarget.querySelector('.difficulty-btn') || event.target.closest('.difficulty-btn') || event.target;
+  const rect = btn.getBoundingClientRect();
+  const pickerHeight = 160;
+  const bottomBarHeight = 80;
+  const spaceBelow = window.innerHeight - rect.bottom - bottomBarHeight;
+  const right = Math.max(8, window.innerWidth - rect.right - 4);
+
+  if (spaceBelow >= pickerHeight) {
+    pickerPos = { top: rect.bottom + 6, bottom: null, right };
+  } else {
+    pickerPos = { top: null, bottom: window.innerHeight - rect.top + 6, right };
+  }
+
+  openPicker = id;
+  render();
+}
+
+// EDIT MODE — flushInputs reads typed values from all visible fields before any save/delete action.
+// toggleEdit enters/exits edit mode; it snapshots current data on entry so Cancel can fully undo.
+// cancelEdit restores that snapshot, discarding all changes made since Edit was tapped.
+function flushInputs(){
+  document.querySelectorAll('.edit-row').forEach(row=>{
+    const d=parseInt(row.dataset.d), e=parseInt(row.dataset.e);
+    if(!isNaN(d)&&!isNaN(e)&&days[d]&&days[d].exercises[e]){
+      const n=row.querySelector('.name-input'), w=row.querySelector('.weight-input');
+      if(n) days[d].exercises[e].name=n.value||days[d].exercises[e].name;
+      if(w) days[d].exercises[e].detail=w.value;
+    }
+  });
+  saveDays();
+}
+
+let editSnapshot = null;
+
+function toggleEdit(){
+  if(editMode){ flushInputs(); editSnapshot=null; }
+  else { editSnapshot = { days: JSON.parse(JSON.stringify(days)), meta: JSON.parse(JSON.stringify(meta)) }; }
+  editMode=!editMode;
+  const btn=document.getElementById('editBtn');
+  btn.textContent=editMode?'Done':'Edit';
+  btn.className=editMode?'btn btn-blue':'btn btn-gray';
+  const cancelBtn=document.getElementById('cancelBtn');
+  if(cancelBtn) cancelBtn.style.display=editMode?'inline-flex':'none';
+  const saveBtn=document.getElementById('saveBtn');
+  const resetBtn=document.getElementById('resetBtn');
+  if(saveBtn) saveBtn.style.display=editMode?'none':'inline-flex';
+  if(resetBtn) resetBtn.style.display=editMode?'none':'inline-flex';
+  renderHeader();
+  render();
+}
+
+function cancelEdit(){
+  if(!editSnapshot) return;
+  days = editSnapshot.days;
+  daysMap[routine] = days;
+  meta = editSnapshot.meta;
+  editSnapshot = null;
+  editMode = false;
+  saveDays(); saveMeta();
+  const btn=document.getElementById('editBtn');
+  btn.textContent='Edit';
+  btn.className='btn btn-gray';
+  document.getElementById('cancelBtn').style.display='none';
+  const saveBtn=document.getElementById('saveBtn');
+  const resetBtn=document.getElementById('resetBtn');
+  if(saveBtn) saveBtn.style.display='inline-flex';
+  if(resetBtn) resetBtn.style.display='inline-flex';
+  renderHeader();
+  render();
+}
+
+function showDeleteConfirm(d, e) {
+  pendingDelete = { d, e };
+  document.getElementById('deleteModal').classList.add('visible');
+}
+
+function hideDeleteConfirm() {
+  pendingDelete = null;
+  document.getElementById('deleteModal').classList.remove('visible');
+}
+
+function confirmDelete() {
+  if (pendingDelete) {
+    const { d, e } = pendingDelete;
+    flushInputs();
+    days[d].exercises.splice(e,1);
+    const ns={};
+    Object.keys(state).forEach(k=>{
+      const [kd,ke]=k.split('_').map(Number);
+      if(kd!==d){ns[k]=state[k];return;}
+      if(ke<e) ns[k]=state[k];
+      else if(ke>e) ns[`${kd}_${ke-1}`]=state[k];
+    });
+    state=ns; stateMap[routine]=state; saveDays(); saveState(); render();
+  }
+  hideDeleteConfirm();
+}
+
+function deleteExercise(d,e){
+  showDeleteConfirm(d, e);
+}
+
+function addExercise(d){
+  flushInputs();
+  days[d].exercises.push({name:"New Exercise",detail:""});
+  saveDays(); render();
+  setTimeout(()=>{
+    const rows=document.querySelectorAll(`.edit-row[data-d="${d}"]`);
+    if(rows.length){const inp=rows[rows.length-1].querySelector('.name-input');inp.focus();inp.select();}
+  },60);
+}
+
+// ── Drag to reorder ──────────────────────────────────
+let dragState = null;
+let autoScrollInterval = null;
+
+function startDrag(clientY, d, fromIdx) {
+  flushInputs();
+  const rows = Array.from(document.querySelectorAll(`.edit-row[data-d="${d}"]`));
+  const dragRow = rows.find(r => parseInt(r.dataset.e) === fromIdx);
+  if (!dragRow) return;
+  const rowH = dragRow.getBoundingClientRect().height;
+  dragRow.style.zIndex = '50';
+  dragRow.style.boxShadow = '0 8px 24px rgba(0,0,0,0.18)';
+  dragRow.style.opacity = '0.95';
+  dragRow.style.borderRadius = '8px';
+  document.body.style.cursor = 'grabbing';
+  
+  // Mobile specific: Prevent text selection highlighting while dragging
+  document.body.style.userSelect = 'none';
+  document.body.style.webkitUserSelect = 'none';
+  
+  dragState = { d, fromIdx, currentIdx: fromIdx, startY: clientY, rowH, rows, dragRow };
+}
+
+function updateDrag(clientY) {
+  if (!dragState) return;
+  const { fromIdx, startY, rowH, rows, dragRow } = dragState;
+  const dy = clientY - startY;
+  dragRow.style.transform = `translateY(${dy}px)`;
+  const newIdx = Math.max(0, Math.min(rows.length - 1, Math.round(fromIdx + dy / rowH)));
+  rows.forEach(row => {
+    if (row === dragRow) return;
+    const idx = parseInt(row.dataset.e);
+    let shift = 0;
+    if (newIdx > fromIdx && idx > fromIdx && idx <= newIdx) shift = -rowH;
+    else if (newIdx < fromIdx && idx >= newIdx && idx < fromIdx) shift = rowH;
+    row.style.transition = 'transform 0.15s ease';
+    row.style.transform = shift ? `translateY(${shift}px)` : '';
+  });
+  dragState.currentIdx = newIdx;
+  
+  // Auto-scroll when near edges
+  const scrollZone = 100;
+  const scrollSpeed = 8;
+  if (autoScrollInterval) {
+    clearInterval(autoScrollInterval);
+    autoScrollInterval = null;
+  }
+  
+  if (clientY < scrollZone) {
+    // Near top - scroll up
+    autoScrollInterval = setInterval(() => {
+      window.scrollBy(0, -scrollSpeed);
+      if (window.scrollY === 0) {
+        clearInterval(autoScrollInterval);
+        autoScrollInterval = null;
+      }
+    }, 16);
+  } else if (clientY > window.innerHeight - scrollZone) {
+    // Near bottom - scroll down
+    autoScrollInterval = setInterval(() => {
+      const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
+      window.scrollBy(0, scrollSpeed);
+      if (window.scrollY >= maxScroll) {
+        clearInterval(autoScrollInterval);
+        autoScrollInterval = null;
+      }
+    }, 16);
+  }
+}
+
+function endDrag() {
+  if (autoScrollInterval) {
+    clearInterval(autoScrollInterval);
+    autoScrollInterval = null;
+  }
+  
+  // Re-enable text selection globally
+  document.body.style.userSelect = '';
+  document.body.style.webkitUserSelect = '';
+  
+  if (!dragState) return;
+  const { d, fromIdx, currentIdx, rows } = dragState;
+  dragState = null;
+  document.body.style.cursor = '';
+  rows.forEach(r => { r.style.transform=''; r.style.transition=''; r.style.zIndex=''; r.style.boxShadow=''; r.style.opacity=''; r.style.borderRadius=''; });
+  if (fromIdx !== currentIdx) {
+    const arr = days[d].exercises;
+    const [moved] = arr.splice(fromIdx, 1);
+    arr.splice(currentIdx, 0, moved);
+    const n = arr.length;
+    const oldOrder = Array.from({length: n}, (_,i) => i);
+    const [m] = oldOrder.splice(fromIdx, 1);
+    oldOrder.splice(currentIdx, 0, m);
+    const ns = {};
+    Object.keys(state).forEach(k => {
+      const [kd, ke] = k.split('_').map(Number);
+      if (kd !== d) { ns[k] = state[k]; return; }
+    });
+    oldOrder.forEach((oldIdx, newIdx) => {
+      const oldKey = `${d}_${oldIdx}`;
+      if (state[oldKey]) ns[`${d}_${newIdx}`] = state[oldKey];
+    });
+    state = ns;
+    stateMap[routine] = state;
+    saveDays(); saveState();
+  }
+  render();
+}
+
+function onHandleTouchStart(e, d, fromIdx) { e.preventDefault(); startDrag(e.touches[0].clientY, d, fromIdx); }
+function onHandleMouseDown(e, d, fromIdx) { e.preventDefault(); startDrag(e.clientY, d, fromIdx); }
+function onTouchMove(e) { if (!dragState) return; e.preventDefault(); updateDrag(e.touches[0].clientY); }
+function onMouseMove(e) { if (!dragState) return; updateDrag(e.clientY); }
+function onTouchEnd() { endDrag(); }
+function onMouseUp() { endDrag(); }
+
+document.addEventListener('touchmove', onTouchMove, { passive: false });
+document.addEventListener('touchend', onTouchEnd);
+document.addEventListener('mousemove', onMouseMove);
+document.addEventListener('mouseup', onMouseUp);
+
+// SAVE & CLEAR — showSave opens the Save popup. confirmSaveLocal saves to the browser only (quick, no file).
+// confirmSaveDownload bakes all current data into the HTML and downloads a new self-contained file —
+// this is the only save that works across browsers and devices.
+// showReset/confirmReset clears all checkboxes and difficulty dots without deleting any exercises.
+function showSave(){ if(editMode) flushInputs(); showMainPanel(); document.getElementById('savePopup').classList.add('visible'); }
+function hideSave(){ document.getElementById('savePopup').classList.remove('visible'); }
+function showMainPanel(){ document.getElementById('savePanel1').style.display=''; document.getElementById('savePanel2').style.display='none'; }
+function showDownloadPanel(){ document.getElementById('savePanel1').style.display='none'; document.getElementById('savePanel2').style.display=''; document.getElementById('downloadFilename').value='WORKOUT-v'+meta.version+'.html'; }
+function confirmSaveLocal(){
+  saveState(); saveDays(); saveMeta();
+  setTimeout(hideSave, 1200);
+}
+function confirmSaveDownload(){
+  if(editMode) flushInputs();
+  const filename = document.getElementById('downloadFilename').value.trim() || 'WORKOUT-vxx.html';
+  meta.version = (meta.version || 18) + 1;
+  meta.savedDate = new Date().toLocaleDateString('en-US', {month:'short', day:'numeric', year:'numeric'});
+  saveMeta();
+  // Close popup and exit edit mode first, then capture DOM after it updates
+  document.getElementById('savePopup').classList.remove('visible');
+  if(editMode){
+    editMode=false;
+    document.getElementById('editBtn').textContent='Edit';
+    document.getElementById('editBtn').className='btn btn-gray';
+    document.getElementById('cancelBtn').style.display='none';
+  }
+  renderHeader();
+  render();
+  requestAnimationFrame(()=>{
+    requestAnimationFrame(()=>{
+      let html = document.documentElement.outerHTML;
+      html = html.replace(/const DEFAULT_DAYS_PUSHPULL = \[[\s\S]*?\];/, 'const DEFAULT_DAYS_PUSHPULL = ' + JSON.stringify(daysMap.pushpull, null, 2) + ';');
+      html = html.replace(/const DEFAULT_DAYS_ARMLEG = \[[\s\S]*?\];/,   'const DEFAULT_DAYS_ARMLEG = '   + JSON.stringify(daysMap.armleg,   null, 2) + ';');
+      html = html.replace(/const DEFAULT_META = \{[^}]*\};/, 'const DEFAULT_META = ' + JSON.stringify(meta) + ';');
+      const blob = new Blob([html], {type:'text/html'});
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = filename;
+      a.click();
+      URL.revokeObjectURL(a.href);
+    });
+  });
+}
+
+function showReset(){
+  if(editMode) flushInputs();
+  document.getElementById('resetModal').classList.add('visible');
+}
+function hideReset(){ document.getElementById('resetModal').classList.remove('visible'); }
+function confirmReset(){
+  Object.keys(state).forEach(k=>{ if(state[k]) state[k].done=false; });
+  saveState(); hideReset(); render();
+}
+
+document.addEventListener('click',()=>{
+  if(openPicker!==null){openPicker=null;render();}
+  const opts=document.getElementById('routineOptions');
+  if(opts) opts.classList.remove('open');
+});
+
+// RENDER ENGINE — render() rebuilds the entire exercise list from scratch on every change.
+// countExercisesAndGroups calculates the X/Y counter (groups count as 1, done if any exercise in group is checked).
+// rebuildGroupsFromCheckboxes scans groupWithNext flags and assigns group IDs so exercises get blue borders.
+// ── Render ───────────────────────────────────────────
+function countExercisesAndGroups(dayData, d) {
+  let total = 0;
+  let done = 0;
+  const seenGroups = new Set();
+  
+  dayData.exercises.forEach((ex, e) => {
+    if (ex.group) {
+      if (!seenGroups.has(ex.group)) {
+        seenGroups.add(ex.group);
+        total++;
+        // Group is done if ANY exercise in the group is done
+        const anyDone = dayData.exercises.some((gex, ge) => 
+          gex.group === ex.group && getEx(d, ge).done
+        );
+        if (anyDone) done++;
+      }
+    } else {
+      total++;
+      if (getEx(d, e).done) done++;
+    }
+  });
+  
+  return { total, done };
+}
+
+function rebuildGroupsFromCheckboxes() {
+  days.forEach(dayData => {
+    let groupCounter = 1;
+    let currentGroup = null;
+    
+    dayData.exercises.forEach((ex, i) => {
+      // Clear existing group property
+      delete ex.group;
+      
+      // If previous exercise had groupWithNext checked, we're in a group
+      if (i > 0 && dayData.exercises[i-1].groupWithNext) {
+        if (!currentGroup) {
+          currentGroup = `group_${groupCounter}`;
+          // Apply to previous exercise too
+          dayData.exercises[i-1].group = currentGroup;
+        }
+        ex.group = currentGroup;
+      }
+      
+      // If current exercise has groupWithNext, continue the group
+      if (ex.groupWithNext) {
+        if (!currentGroup) {
+          currentGroup = `group_${groupCounter}`;
+        }
+        ex.group = currentGroup;
+      } else {
+        // End of group
+        if (currentGroup) {
+          groupCounter++;
+          currentGroup = null;
+        }
+      }
+    });
+  });
+}
+
+function renderDiffOption(d2, d, e) {
+  if (d2 === '') return '<button class="diff-option" style="visibility:hidden"></button>';
+  
+  let content, cssClass = 'diff-option';
+  
+  if (d2 === '⬤') {
+    content = '×';
+  } else if (d2 === '✔') {
+    content = '✔︎';
+    cssClass += ' checkmark';
+  } else if (d2 === '✔✔') {
+    content = '✔︎✔︎';
+    cssClass += ' checkmark multi';
+  } else if (d2 === '✔✔✔') {
+    content = '✔︎✔︎✔︎';
+    cssClass += ' checkmark multi';
+  } else {
+    content = d2;
+  }
+  
+  return `<button class="${cssClass}" onclick="setDiff(${d},${e},'${d2}')">${content}</button>`;
+}
+
+function render(){
+  rebuildGroupsFromCheckboxes();
+  const app=document.getElementById('app');
+  let html='';
+
+  days.forEach((dayData,d)=>{
+    // Skip hidden days in normal mode; always show them in edit mode
+    if (!editMode && dayData.hidden) return;
+    html+=`<div class="day-block">`;
+    const { total, done } = countExercisesAndGroups(dayData, d);
+    const pct=total?Math.round(done/total*100):0;
+
+    if(editMode){
+      const daySub = dayData.type + (dayData.gym ? ' · ' + dayData.gym : '');
+      html+=`<div class="day-header">
+        <input class="day-edit-name" value="${dayData.day.replace(/"/g,'&quot;')}" onchange="days[${d}].day=this.value;saveDays();">
+        <input class="day-edit-sub" value="${daySub.replace(/"/g,'&quot;')}" placeholder="type · gym" onchange="days[${d}].type=this.value;days[${d}].gym=null;saveDays();">
+        <div class="day-toggle${dayData.hidden?'':' on'}" onclick="days[${d}].hidden=!days[${d}].hidden;saveDays();render();" title="Show this day"></div>
+      </div>`;
+    } else {
+      html+=`<div class="day-header">
+        <span class="day-name">${dayData.day}</span>
+        <span class="day-sub">${dayData.type}${dayData.gym?' · '+dayData.gym:''}</span>
+        ${total>0?`<span class="day-progress"><span>${done}</span>/${total}</span>`:''}
+      </div>`;
+    }
+
+    if(!editMode){
+      html+=`<div class="progress-bar-wrap"><div class="progress-bar-fill" style="width:${pct}%"></div></div>`;
+    }
+
+    if(total>0){
+      html+=`<div class="exercise-list">`;
+      let i = 0;
+      while (i < dayData.exercises.length) {
+        const ex = dayData.exercises[i];
+        if (editMode) {
+          const isGrouped = (ex.groupWithNext) || (i > 0 && dayData.exercises[i-1].groupWithNext);
+          const groupedClass = isGrouped ? ' grouped' : '';
+          
+          // FIXED ALIGNMENT: 14px horizontal padding + flex-start to align checkbox directly under drag bars
+          html+=`<div class="edit-row${groupedClass}" data-d="${d}" data-e="${i}">
+              <div class="drag-handle" id="handle_${d}_${i}" style="grid-row:1;grid-column:1;">
+                <span></span><span></span><span></span>
+              </div>
+              <input class="edit-input name-input" type="text" value="${ex.name.replace(/"/g,'&quot;')}" placeholder="Exercise name" autocomplete="off" autocorrect="off" spellcheck="false"
+                onchange="days[${d}].exercises[${i}].name=this.value;saveDays();" style="grid-row:1;grid-column:2;">
+              <button class="delete-btn" onclick="deleteExercise(${d},${i})" style="grid-row:1/span 2;grid-column:3;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg></button>
+              <div style="grid-row:2;grid-column:1;display:flex;align-items:center;justify-content:flex-start;margin-left:-4px;padding:0 14px 0 14px;">
+                <div class="group-check${ex.groupWithNext?' on':''}" onclick="days[${d}].exercises[${i}].groupWithNext=!days[${d}].exercises[${i}].groupWithNext;saveDays();render();">
+                  <div class="group-check-box"><svg width="9" height="7" viewBox="0 0 9 7" fill="none"><path d="M1 3.5L3.5 6L8 1" stroke="#fff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+                  <span class="group-check-label">▼</span>
+                </div>
+              </div>
+              <input class="edit-input weight-input" type="text" value="${ex.detail.replace(/"/g,'&quot;')}" placeholder="Sets · reps · weight" autocomplete="off" autocorrect="off" spellcheck="false"
+                onchange="days[${d}].exercises[${i}].detail=this.value;saveDays();" style="grid-row:2;grid-column:2;">
+            </div>`;
+          i++;
+        } else {
+          // Check if this exercise starts a group (has groupWithNext)
+          if (ex.groupWithNext) {
+            // Find all exercises in this group
+            const groupExercises = [];
+            let j = i;
+            // Add first exercise
+            groupExercises.push({ ex: dayData.exercises[j], index: j });
+            j++;
+            // Continue while previous exercise has groupWithNext
+            while (j < dayData.exercises.length && dayData.exercises[j-1].groupWithNext) {
+              groupExercises.push({ ex: dayData.exercises[j], index: j });
+              j++;
+            }
+            
+            // Render as group with blue border
+            html += `<div class="exercise-group">`;
+              groupExercises.forEach(({ ex: gex, index: e }) => {
+                const exState=getEx(d,e);
+                const pickerId=`${d}_${e}`;
+                const isDone=exState.done;
+                const diff=exState.diff||"";
+                html+=`<div class="exercise-item${isDone?' done':''}">
+                  <div class="checkbox-zone" onclick="toggleDone(${d},${e})">
+                    <div class="checkbox"><svg class="checkmark" viewBox="0 0 10 7"><path d="M1 3.5L3.5 6L9 1"/></svg></div>
+                  </div>
+                  <div class="exercise-name">${gex.name}</div>
+                  <div class="diff-zone" onclick="togglePicker('${pickerId}',event)">
+                    <div class="exercise-weight">${gex.detail}</div>
+                    <div style="position:relative;display:inline-flex;">
+                      <button class="difficulty-btn" style="${(diff||'⬤').startsWith('✔')?'color:#22c55e':''}">${displayDiff(diff||'⬤')}</button>
+                      ${openPicker===pickerId?`
+                      <div class="difficulty-picker" style="right:${pickerPos.right}px;${pickerPos.top!==null?'top:'+pickerPos.top+'px':'bottom:'+pickerPos.bottom+'px'}" onclick="event.stopPropagation()">
+                        ${DIFFICULTIES.map(d2=>renderDiffOption(d2,d,e)).join('')}
+                      </div>`:''}
+                    </div>
+                  </div>
+                </div>`;
+              });
+              html += `</div>`;
+              i = j; // Skip past all grouped exercises
+          } else {
+            // Render single exercise
+            const exState=getEx(d,i);
+            const pickerId=`${d}_${i}`;
+            const isDone=exState.done;
+            const diff=exState.diff||"";
+            html+=`<div class="exercise-item${isDone?' done':''}">
+              <div class="checkbox-zone" onclick="toggleDone(${d},${i})">
+                <div class="checkbox"><svg class="checkmark" viewBox="0 0 10 7"><path d="M1 3.5L3.5 6L9 1"/></svg></div>
+              </div>
+              <div class="exercise-name">${ex.name}</div>
+              <div class="diff-zone" onclick="togglePicker('${pickerId}',event)">
+                <div class="exercise-weight">${ex.detail}</div>
+                <div style="position:relative;display:inline-flex;">
+                  <button class="difficulty-btn" style="${(diff||'⬤').startsWith('✔')?'color:#22c55e':''}">${displayDiff(diff||'⬤')}</button>
+                  ${openPicker===pickerId?`
+                  <div class="difficulty-picker" style="right:${pickerPos.right}px;${pickerPos.top!==null?'top:'+pickerPos.top+'px':'bottom:'+pickerPos.bottom+'px'}" onclick="event.stopPropagation()">
+                    ${DIFFICULTIES.map(d2=>renderDiffOption(d2,d,i)).join('')}
+                  </div>`:''}
+                </div>
+              </div>
+            </div>`;
+            i++;
+          }
+        }
+      }
+      html+=`</div>`;
+    }
+
+    if(editMode){
+      html+=`<button class="add-exercise-btn${total>0?' attached':''}" onclick="addExercise(${d})">+ Add exercise</button>`;
+    }
+
+    html+=`</div>`;
+  });
+
+  app.innerHTML=html;
+
+  if(editMode){
+    document.querySelectorAll('.drag-handle').forEach(handle=>{
+      const id = handle.id;
+      const parts = id.split('_');
+      const d = parseInt(parts[1]);
+      const e = parseInt(parts[2]);
+      handle.addEventListener('touchstart', ev => onHandleTouchStart(ev, d, e), {passive:false});
+      handle.addEventListener('mousedown', ev => onHandleMouseDown(ev, d, e));
+    });
+  }
+}
+
+render();
+renderHeader();
+
+// ─── Screen Wake Lock ─────────────────────────────────────────────────────────
+let wakeLock = null;
+async function requestWakeLock() {
+  try { wakeLock = await navigator.wakeLock.request('screen'); } catch(e) {}
+}
+document.addEventListener('visibilitychange', () => {
+  if (document.visibilityState === 'visible') requestWakeLock();
+});
+requestWakeLock();
+</script>
+
+</body></html>
