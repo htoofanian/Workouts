@@ -16,10 +16,13 @@ Live link to the HTML file on github is as follows:
 
     https://htoofanian.github.io/Workouts/WORKOUT-vX.X.html
     
-This link is for my own use, as I will be editing this file continuously so the file version used in the name will change.  You will need to update the version number to the current version.  Version numbers are used to prevent browsers from loading outdated cached versions.  You can ask me for the current version number.
+To save this file on your phone, email the above link, open it and then use the "Send To" button in the upper left and select "Add to Home Page" from the expanded list of options.  An app will be added to the last page of your phone. 
+
+The link above is for my own use, as I will be editing this file continuously so the file version used in the name will change.  You will need to update the version number to the current version.  Version numbers are used to prevent browsers from loading outdated cached versions.  You can ask me for the current version number.
+
 
 An easier fixed link to the latest version of file, intended for sharing and use by others, is at:
 
     https://htoofanian.github.io/Shared/WORKOUT.html
-    
+
 This file name stays unchanged, and will just link to the current version of the file.
